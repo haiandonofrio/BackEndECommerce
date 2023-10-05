@@ -17,7 +17,7 @@ router.post('/', async (req, res) => {
     try {
         const Cart = await cartManager.addCart();
 
-        res.status(201).json({ message: `Cart created successfully` });
+        res.status(201).json({ message: `Cart ${Cart} created successfully` });
     } catch (error) {
         res.status(500).json({ error: 'Internal Server Error' });
     }

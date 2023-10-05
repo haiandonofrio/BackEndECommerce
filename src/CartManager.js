@@ -41,10 +41,7 @@ export class CartManager {
 
     async addCart() {
 
-        const CartById = this.cart.find(product => product.code === code);
-        if (CartById) {
-            throw new Error('El carrito ya existe')
-        } else {
+
             // Agregamos el carrito con un id autoincrementable
             const Cart = {
                 id: this.cartIdCounter++,
@@ -53,8 +50,8 @@ export class CartManager {
 
             this.cart.push(Cart);
             this.WriteFile(this.cart)
-            return this.cart
-        }
+        return this.cartIdCounter
+        
     }
 
 
