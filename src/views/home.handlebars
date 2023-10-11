@@ -1,0 +1,24 @@
+<!-- views/home.handlebars -->
+
+<h1>Listado de Productos</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Precio</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each products}}
+            <tr>
+                <td>{{id}}</td>
+                <td>{{title}}</td>
+                <td>{{description}}</td>
+                <td>${{price}}</td>
+            </tr>
+        {{/each}}
+    </tbody>
+</table>

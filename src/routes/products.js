@@ -25,6 +25,10 @@ router.get('/', async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: 'Internal Server Error' });
     }
+
+    prodsRender = JSON.parse(products)
+    // Renderiza la vista "home.handlebars" y pasa los datos de los productos
+    res.render('home', { prodsRender });
 });
 
 // Get a product by ID
