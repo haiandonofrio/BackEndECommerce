@@ -16,19 +16,23 @@ router.use(express.urlencoded({ extended: true }));
 router.get('/', async (req, res) => {
     try {
         const products = await productManager.getProducts();
+        const prodsRender = JSON.parse(products)
         const limit = parseInt(req.query.limit, 10);
         if (!isNaN(limit)) {
-            res.json(JSON.parse(products.slice(0, limit)))
+            res.render('home', { prodsRender });
+
+
+            // res.json(JSON.parse(products.slice(0, limit)))
         } else {
-            res.json(JSON.parse(products));
+            res.render('home', { prodsRender });
+            // res.json(JSON.parse(products));
         }
     } catch (error) {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 
-    prodsRender = JSON.parse(products)
     // Renderiza la vista "home.handlebars" y pasa los datos de los productos
-    res.render('home', { prodsRender });
+    // res.render('home', { products });
 });
 
 // Get a product by ID
