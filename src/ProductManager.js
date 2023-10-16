@@ -55,12 +55,21 @@ export class ProductManager {
         }
     }
 
-    addProduct(title, description, price, thumbnails, code, stock, status, category) {
+    async addProduct(title, description, price, thumbnails, code, stock, status, category) {
 
         // Validamos que todos los campos sean obligatorios
         if (!title || !description || !price || !code || !stock || !status || !category) {
             console.error("Titulo, descripcion, precio, código, status, stock y categoria son obligatorios");
             return;
+        }
+
+        const fileproducts = JSON.parse(await fs.readFile(this.path, 'utf-8'))
+
+        // const prodsfromfile = JSON.parse(fileproducts)
+        if (fileproducts.length !== 0 && this.products.length === 0) {
+            this.products = [...fileproducts];
+            this.productIdCounter += this.products[this.products.length - 1].id;
+            this.productIdCounter ++
         }
 
         if (!status) status = true
