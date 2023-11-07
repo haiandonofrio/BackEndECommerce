@@ -1,5 +1,5 @@
 import express from 'express';
-
+import { productModel } from '../models/productModel.js'
 const router = express.Router();
 
 // Import the ProductManager class
@@ -15,17 +15,19 @@ router.use(express.urlencoded({ extended: true }));
 // Get all products
 router.get('/', async (req, res) => {
     try {
-        const products = await productManager.getProducts();
-        const prodsRender = JSON.parse(products)
+        // const products = await productManager.getProducts();
+        // const prodsRender = JSON.parse(products)
+        let products = await productModel.find()
         const limit = parseInt(req.query.limit, 10);
         if (!isNaN(limit)) {
-            res.render('home', { prodsRender });
-
+            // res.render('home', { prodsRender });
+            res.send({ result: "success", payload: products })
 
             // res.json(JSON.parse(products.slice(0, limit)))
         } else {
-            res.render('home', { prodsRender });
+            // res.render('home', { prodsRender });
             // res.json(JSON.parse(products));
+            res.send({ result: "success", payload: products })
         }
     } catch (error) {
         res.status(500).json({ error: 'Internal Server Error' });

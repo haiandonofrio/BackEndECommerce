@@ -1,0 +1,180 @@
+openapi: 3.0.3
+
+info:
+  version: 0.0.1
+  title: 'Product API'
+  description: 'API para conseguir y agregar productos a ecommerce'
+  termsOfService: TERMS_OF_SERVICE
+  license:
+    name: MIT
+    url: LICENSE
+  contact: 
+    name: Haian Donofrio
+    url: https://github.com/haiandonofrio
+    email: haiandonofriom@gmail.com
+
+tags:
+  name: Product
+  description: Endpoints de producto
+
+servers:
+  url: http://{HOST}:{PORT}/{BASE_PATH}
+  variables:
+    HOST:
+      default: '127.0.0.1'
+    PORT: 
+      default: '3000'
+    BASE_PATH:
+      default: api
+
+paths: 
+  /product: 
+    get: 
+      tags:
+        Product
+      summary: Get all products
+      responses:
+        200: 
+          description: JSON Array with all the products
+          content:
+            application/json: 
+              schema:
+                $ref: '#/components/schemas/Product'
+        404: 
+          description: Return message when there is no products to find
+          content:
+            application/json: 
+              schema:
+                $ref: '#/components/schemas/Error'
+        500: 
+          description: Return message when there is a server error
+            content:
+              application/json: 
+                schema:
+                  $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        Product
+      summary: Create new products
+      responses:
+        201: 
+          description: A new product has been created
+          content:
+            application/json: 
+              schema:
+                $ref: '#/components/schemas/Product'
+        404: 
+          description: Return message when there is no products to find
+          content:
+            application/json: 
+              schema:
+                $ref: '#/components/schemas/Error'
+        500: 
+          description: Return message when there is a server error
+            content:
+              application/json: 
+                schema:
+                  $ref: '#/components/schemas/Error'
+  /product/{pid}:
+    parameters:
+      name: pid
+      description: id for one product only
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/ProductID'
+
+    put:
+      tags:
+        Product
+      summary: Update a product
+      responses:
+        200: 
+          description: The updated product
+          content:
+            application/json: 
+              schema:
+                $ref: '#/components/schemas/Product' 
+        404: 
+          description: Return message when there is no products to update
+          content:
+            application/json: 
+              schema:
+                $ref: '#/components/schemas/Error'
+        500: 
+          description: Return message when there is a server error
+            content:
+              application/json: 
+                schema:
+                  $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        Product
+      summary: Delete a product
+      responses:
+        200: 
+          description: The deleted product
+          content:
+            application/json: 
+              schema:
+                $ref: '#/components/schemas/Product'
+        404: 
+          description: Return message when there is no products to update
+          content:
+            application/json: 
+              schema:
+                $ref: '#/components/schemas/Error'
+        500: 
+          description: Return message when there is a server error
+            content:
+              application/json: 
+                schema:
+                  $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    ProductID:
+      type: string
+      description: Unique identifier of a product
+    Product:
+      type: object
+      description: Products from the DB
+      required:
+        - title
+        - description
+        - price
+        - thumbnails
+        - code
+        - stock
+        - status
+        - category
+      properties:
+        id:
+          $ref: '#/components/schemas/ProductId'
+        title:
+          type: string
+        description:
+          type: string
+        price: 
+          type: number
+        thumbnails: 
+          type: array
+          items:
+            type: string
+        code: 
+          type: string
+        stock:
+          type: integer
+        status:
+          type: boolean
+        category:
+          type: string
+
+    Error:
+      type: object
+      required:
+        - message
+      properties: 
+        message:
+          type: string
+          description: Error message for each process
+
