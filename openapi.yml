@@ -171,8 +171,6 @@ components:
         - status
         - category
       properties:
-        id:
-          $ref: '#/components/schemas/ProductId'
         title:
           type: string
         description:

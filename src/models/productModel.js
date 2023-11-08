@@ -2,20 +2,46 @@
 
 import mongoose from "mongoose";
 
-const productCollection = 'products'
+const { Schema, model } = mongoose
+const ProductSchema = new Schema({
+    id: {
+        type: Number,
+        required: false,
+    },
+    title: {
+        type: String,
+        required: true,
+    },
+    description: {
+        type: String,
+        required: true,
+    },
+    price: {
+        type: Number,
+        required: true,
+    },
+    thumbnails: {
+        type: [String],
+        required: true,
+    },
+    code: {
+        type: String,
+        required: true,
+    },
+    stock: {
+        type: Number,
+        required: true,
+    },
+    status: {
+        type: String,
+        required: true,
+    },
+    category: {
+        type: String,
+        required: true,
+    },
+    createdAt: { type: Date, default: Date.now },
+    UpdatedAt: { type: Date, default: Date.now },
+});
 
-const productSchema = new mongoose.Schema({
-    // _id: ObjectId, // Automatically generated unique identifier (ObjectId) for each document
-    id: String,
-    title: String,
-    description: String,
-    price: String, // You can store the price as a floating-point number without specifying the number of decimal places
-    thumbnails: [String], // An array of strings to store thumbnail URLs
-    code: String,
-    stock: String,
-    status: String,
-    category: String
-}
-)
-
-export const productModel = mongoose.model(productCollection, productSchema);
+export const Product = model('products', ProductSchema)
