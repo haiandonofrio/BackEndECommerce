@@ -3,7 +3,7 @@ import { getCarts, createCart, getCartbyId, deleteCart, addProductToCart } from 
 const router = express.Router();
 
 // Import the ProductManager class
-import { CartManager } from '../CartManager.js'; // Adjust the import path as needed
+import { CartManager } from '../controller/CartManager.js'; // Adjust the import path as needed
 
 // Create an instance of the ProductManager class, specifying the path to the data file
 const cartManager = new CartManager('cart.json'); // Specify the correct file path

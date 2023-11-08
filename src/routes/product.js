@@ -2,7 +2,7 @@
 
 import express from 'express';
 // import { productSchema } from '../models/productModel.js'
-import { ProductManager } from '../ProductManager.js'; // Adjust the import path as needed
+import { ProductManager } from '../controller/ProductManager.js'; // Adjust the import path as needed
 import { getProducts, saveProduct, getProductByID, deleteProduct, modifyProduct } from '../controller/productController.js';
 
 const router = express.Router();
