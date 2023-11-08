@@ -6,7 +6,7 @@ export const getCarts = async (req, res) => {
 
     try {
 
-        const carts = await Cart.find({})
+        const carts = await Cart.find({}).select(['-__v'])
 
         if (!carts) {
             return res.status(404).send({

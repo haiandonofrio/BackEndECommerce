@@ -67,7 +67,7 @@ export const saveProduct = async (req, res) => {
 
 export const getProductByID = async (req, res) => {
     try {
-        const query = Product.where({ id: req.params.pid });
+        const query = Product.where({ _id: req.params.pid });
         const products = await query.findOne()
 
         if (!products) {
@@ -95,7 +95,7 @@ export const getProductByID = async (req, res) => {
 export const deleteProduct = async (req, res) => {
     try {
         // const query = Product.where({ id: req.params.pid });
-        const products = await Product.deleteOne({ id: req.params.pid });
+        const products = await Product.deleteOne({ _id: req.params.pid });
 
         if (!products) {
             return res.status(404).send({
@@ -121,7 +121,7 @@ export const deleteProduct = async (req, res) => {
 export const modifyProduct = async (req, res) => {
     try {
         // const query = Product.where({ id: req.params.pid });
-        const filter = { id: req.params.pid };
+        const filter = { _id: req.params.pid };
 
         const update = {
             title: req.body.title,

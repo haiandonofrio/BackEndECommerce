@@ -3,10 +3,15 @@
 import mongoose from "mongoose";
 
 const { Schema, model } = mongoose
+
+const products = new Schema({
+    productId: String,
+    quantity: Number});
+
 const cartSchema = new Schema({
 
     products: {
-        type: [String],
+        type: [products],
         required: true,
     },
 
