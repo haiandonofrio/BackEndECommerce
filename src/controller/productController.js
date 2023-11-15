@@ -13,7 +13,7 @@ export const getProducts = async (req, res) => {
         filter.category = category;
     }
     if (minStock) {
-        filter.stock = { $gt: parseInt(minStock) };
+        filter.stock = { $gt: parseInt(minStock) || 1 };
     }
 
     try {
@@ -39,11 +39,11 @@ export const getProducts = async (req, res) => {
         let nextLink = null;
 
         if (hasPrevPage) {
-            prevLink = `/api/products?page=${page - 1}`;
+            prevLink = `/api/product?page=${page - 1}`;
         }
 
         if (hasNextPage) {
-            nextLink = `/api/products?page=${page + 1}`;
+            nextLink = `/api/product?page=${page + 1}`;
         }
 
         const response = {
