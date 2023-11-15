@@ -1,5 +1,5 @@
 import express from 'express';
-import { getCarts, createCart, getCartbyId, deleteCart, addProductToCart } from '../controller/cartController.js';
+import { getCarts, createCart, getCartbyId, deleteCart, addProductToCart, deleteProductFromCart } from '../controller/cartController.js';
 const router = express.Router();
 
 // Import the ProductManager class
@@ -20,6 +20,8 @@ router.get('/', getCarts)
 router.get('/:cid', getCartbyId)
 
 router.delete('/:cid', deleteCart)
+
+router.delete('/:cid/product/:pid', deleteProductFromCart)
 
 // Create a new product or add products to Cart
 router.post('/:cid/product/:pid', addProductToCart)
