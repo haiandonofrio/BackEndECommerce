@@ -1,6 +1,7 @@
 'use strict'
 
 import mongoose from "mongoose";
+import mongoosePaginate from 'mongoose-paginate-v2'
 
 const { Schema, model } = mongoose
 const ProductSchema = new Schema({
@@ -44,4 +45,5 @@ const ProductSchema = new Schema({
     UpdatedAt: { type: Date, default: Date.now },
 });
 
+ProductSchema.plugin(mongoosePaginate);
 export const Product = model('products', ProductSchema)

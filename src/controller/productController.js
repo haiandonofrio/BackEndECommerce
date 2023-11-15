@@ -3,8 +3,13 @@
 import { Product } from '../models/productModel.js'
 
 export const getProducts = async (req, res) => {
-    const page = parseInt(req.query.page) || 1;
-    const limit = 10;
+
+
+    const sortField = req.query.sort || 'price';
+    const sortOrder = parseInt(req.query.order === 'desc' ? '-1' : '1');
+
+    const currPage = parseInt(req.query.page) || 1;
+    const qlimit = parseInt(req.query.limit, 10) || 3;;
 
     const { category, minStock } = req.query; // Assuming query parameters for category and minStock
 
@@ -13,45 +18,58 @@ export const getProducts = async (req, res) => {
         filter.category = category;
     }
     if (minStock) {
-        filter.stock = { $gt: parseInt(minStock) || 1 };
+        filter.stock = { $gt: parseInt(minStock) || 0 };
     }
 
     try {
-        const totalCount = await Product.countDocuments(filter);
-        const totalPages = Math.ceil(totalCount / limit);
+        // const totalCount = await Product.countDocuments(filter);
+        // const totalPages = Math.ceil(totalCount / limit);
+        const options = {
+            page: currPage, // Page number
+            limit: qlimit, // Number of documents per page
 
-        const results = await Product.find(filter)
-            .skip((page - 1) * limit)
-            .limit(limit);
+        };
+
+        options.sort = { [sortField]: sortOrder };
+
+        const results = await Product.paginate(filter, options)
+        // .find(filter)
+        // .skip((page - 1) * limit)
+        // .limit(limit)
+
+
 
         if (results.length === 0) {
-            const responseerror = {
+            const responseError = {
                 status: 'error',
                 payload: 'No products found',
             };
 
-            return res.status(404).json(responseerror);
+            return res.status(404).json(responseError);
         }
-        const hasNextPage = page < totalPages;
-        const hasPrevPage = page > 1;
-
+        // const hasNextPage = page < totalPages;
+        // const hasPrevPage = page > 1;
+        const hasNextPage = results.hasNextPage;
+        const hasPrevPage = results.hasPrevPage;
         let prevLink = null;
         let nextLink = null;
 
         if (hasPrevPage) {
-            prevLink = `/api/product?page=${page - 1}`;
+            prevLink = `/api/product?page=${currPage - 1}`;
         }
 
         if (hasNextPage) {
-            nextLink = `/api/product?page=${page + 1}`;
+            nextLink = `/api/product?page=${currPage + 1}`;
         }
+        const totalPages = results.totalPages;
 
         const response = {
             status: 'success',
-            payload: results,
+            payload: results.docs,
             totalPages,
-            prevPage: hasPrevPage ? page - 1 : null,
-            nextPage: hasNextPage ? page + 1 : null,
+            currPage,
+            prevPage: hasPrevPage ? currPage - 1 : null,
+            nextPage: hasNextPage ? currPage + 1 : null,
             hasPrevPage,
             hasNextPage,
             prevLink,
@@ -73,7 +91,7 @@ export const saveProduct = async (req, res) => {
         const product = new Product({
             title: req.body.title,
             description: req.body.description,
-            price: req.body.price,
+            price: parseFloat(req.body.price),
             thumbnails: req.body.thumbnails,
             code: req.body.code,
             stock: req.body.stock,

@@ -114,7 +114,7 @@ export const deleteCart = async (req, res) => {
         }
     }
 
-const deleteProductFromCart = async (req, res) => {
+export const deleteProductFromCart = async (req, res) => {
     const { cid, pid } = req.params;
 
     try {

@@ -1,1 +1,102 @@
-[{"id":0,"title":"asfasfa","description":"safasfa","price":"34235","thumbnails":"asafaf","code":"fssvs","stock":"34","status":"X","category":"asdasdasa"},{"id":1,"title":"afsaf","description":"afas","price":"424","thumbnails":"dascbhgs","code":"avavsd","stock":"42","status":"X","category":"ghrrd"},{"id":2,"title":"sfafas","description":"afsa","price":"4343","thumbnails":"acbsgds","code":"safasca","stock":"232","status":"X","category":"asasfa"},{"id":3,"title":"asfasf","description":"savdshgd","price":"565","thumbnails":"snjhtgfh","code":"jgff56","stock":"54","status":"X","category":"nhjiuggg"},{"id":4,"title":"safasfhfd","description":"dssg","price":"476","thumbnails":"n hfghgf","code":"mgj67","stock":"56","status":"X","category":"gdjg7"},{"id":5,"title":"nombre2","description":"nombre2","price":"546","thumbnails":"imagen2","code":"cod234","stock":"54","status":"X","category":"category2"},{"id":6,"title":"nombre3","description":"desc3","price":"24424","thumbnails":"imagen3","code":"cod546","stock":"53","status":"X","category":"cat3"},{"id":7,"title":"nombre4","description":"desc4","price":"3536","thumbnails":"imagen4","code":"cod674","stock":"35","status":"X","category":"cat4"},{"id":7,"title":"nombre5","description":"desc5","price":"435","thumbnails":"imagen5","code":"cod865","stock":"25","status":"X","category":"cat5"},{"id":8,"title":"nombre6","description":"desc6","price":"454","thumbnails":"imagen6","code":"cod758","stock":"23","status":"X","category":"cat6"},{"id":9,"title":"nombre7","description":"desc7","price":"256","thumbnails":"imagen7","code":"cod654","stock":"21","status":"X","category":"cat7"},{"id":9,"title":"nombre8","description":"desc8","price":"937","thumbnails":"imagen8","code":"cod098","stock":"15","status":"X","category":"cat8"},{"id":9,"title":"nombre9","description":"desc9","price":"455","thumbnails":"imagen9","code":"cod622","stock":"15","status":"X","category":"cat9"},{"id":10,"title":"nombre10","description":"desc10","price":"254","thumbnails":"imagen10","code":"cod422","stock":"21","status":"X","category":"cat10"},{"id":11,"title":"prod11","description":"desc11","price":"147","thumbnails":"imagen11","code":"cod11","stock":"66","status":"X","category":"cat11"},{"id":12,"title":"prod12","description":"desc12","price":"332","thumbnails":"imagen12","code":"cod12","stock":"22","status":"X","category":"cat12"}]
+[
+    {
+        "title": "Botella 1",
+        "description": "Botella personal",
+        "price": 3450,
+        "thumbnails": ["imagen1", "imagen2"],
+        "code": "bot1",
+        "stock": 20,
+        "status": true,
+        "category": "Botellas"
+    },
+    {
+        "title": "Botella 2",
+        "description": "Botella personal",
+        "price": 4000,
+        "thumbnails": ["imagen1", "imagen2"],
+        "code": "bot2",
+        "stock": 12,
+        "status": true,
+        "category": "Botellas"
+    },
+    {
+        "title": "Botella 3",
+        "description": "Botella personal",
+        "price": 4500,
+        "thumbnails": ["imagen1", "imagen2"],
+        "code": "bot3",
+        "stock": 14,
+        "status": true,
+        "category": "Botellas"
+    },
+    {
+        "title": "Taza 1",
+        "description": "Taza personal",
+        "price": 1500,
+        "thumbnails": ["imagen1", "imagen2"],
+        "code": "taz1",
+        "stock": 30,
+        "status": true,
+        "category": "Tazas"
+    },
+    {
+        "title": "Taza 2",
+        "description": "Taza personal",
+        "price": 500,
+        "thumbnails": ["imagen1", "imagen2"],
+        "code": "taz2",
+        "stock": 50,
+        "status": true,
+        "category": "Tazas"
+    },
+    {
+        "title": "Taza 3",
+        "description": "Taza personal",
+        "price": 1200,
+        "thumbnails": ["imagen1", "imagen2"],
+        "code": "taz3",
+        "stock": 30,
+        "status": true,
+        "category": "Tazas"
+    },
+    {
+        "title": "Plato 1",
+        "description": "Plato personal",
+        "price": 1200,
+        "thumbnails": ["imagen1", "imagen2"],
+        "code": "pla1",
+        "stock": 35,
+        "status": true,
+        "category": "Platos"
+    },
+    {
+        "title": "Plato 2",
+        "description": "Plato personal",
+        "price": 1800,
+        "thumbnails": ["imagen1", "imagen2"],
+        "code": "pla2",
+        "stock": 35,
+        "status": true,
+        "category": "Platos"
+    },
+    {
+        "title": "Plato 3",
+        "description": "Plato personal",
+        "price": 9000,
+        "thumbnails": ["imagen1", "imagen2"],
+        "code": "pla3",
+        "stock": 35,
+        "status": true,
+        "category": "Platos"
+    },
+    {
+        "title": "Plato 4",
+        "description": "Plato personal",
+        "price": 12500,
+        "thumbnails": ["imagen1", "imagen2"],
+        "code": "pla4",
+        "stock": 35,
+        "status": true,
+        "category": "Platos"
+    }
+]
