@@ -4,7 +4,7 @@ import { Cart } from '../models/cartModel.js'
 
 export const getCarts = async (req, res) => {
     try {
-        const carts = await Cart.find({}).select(['-__v'])
+        const carts = await Cart.find({}).select(['-__v']).populate('products.producto');
 
         if (!carts) {
             return res.status(404).send({
@@ -61,7 +61,7 @@ export const createCart = async (req, res) => {
 export const getCartbyId = async (req, res) => {
     try {
         const query = Cart.where({ _id: req.params.cid })
-        const carts = await query.findOne()
+        const carts = await query.findOne().populate('products.producto');
 
         if (!carts) {
             return res.status(404).send({
@@ -85,34 +85,34 @@ export const getCartbyId = async (req, res) => {
 }
 
 export const deleteCart = async (req, res) => {
-    
-        const { cid } = req.params;
 
-        try {
-            const updatedCart = await Cart.findByIdAndUpdate(
-                cid,
-                { $set: { products: [] } },
-                { new: true } // To return the updated document
-            );
+    const { cid } = req.params;
 
-            if (updatedCart) {
-                // Cart updated successfully
-                console.log('Cart updated:', updatedCart);
-                res.status(200).json({ message: 'Cart updated successfully', cart: updatedCart });
-            } else {
-                // Cart with the given ID not found
-                console.log('Cart not found');
-                res.status(404).json({ message: 'Cart not found' });
-            }
-        }
-        catch (err) {
-            console.log(err)
-            res.status(500).send({
-                status: 500,
-                message: err.message,
-            })
+    try {
+        const updatedCart = await Cart.findByIdAndUpdate(
+            cid,
+            { $set: { products: [] } },
+            { new: true } // To return the updated document
+        );
+
+        if (updatedCart) {
+            // Cart updated successfully
+            console.log('Cart updated:', updatedCart);
+            res.status(200).json({ message: 'Cart updated successfully', cart: updatedCart });
+        } else {
+            // Cart with the given ID not found
+            console.log('Cart not found');
+            res.status(404).json({ message: 'Cart not found' });
         }
     }
+    catch (err) {
+        console.log(err)
+        res.status(500).send({
+            status: 500,
+            message: err.message,
+        })
+    }
+}
 
 export const deleteProductFromCart = async (req, res) => {
     const { cid, pid } = req.params;
@@ -140,36 +140,78 @@ export const deleteProductFromCart = async (req, res) => {
     }
 };
 
-export const addProductToCart = async (req, res) => {
+export const addMoreProducts = async (req, res) => {
 
-        const { cid, pid } = req.params;
-        const { quantity } = req.body;
+    const { cid, pid } = req.params;
+    const { quantity } = req.body;
 
-        try {
-            const cart = await Cart.findOneAndUpdate(
-                { _id: cid, 'products.producto': pid },
-                { $inc: { 'products.$.quantity': quantity || 1 } },
+    try {
+        const cart = await Cart.findOneAndUpdate(
+            { _id: cid, 'products.producto': pid },
+            { $inc: { 'products.$.quantity': quantity || 1 } },
+            { new: true } // Return the modified document
+        ).populate('products.producto');
+
+        if (!cart) {
+            const newProd =
+            {
+                producto: pid,
+                quantity: quantity || 1
+            }
+                ;
+            const savedCart = await Cart.findOneAndUpdate(
+                { _id: cid },
+                { $push: { products: newProd } },
                 { new: true } // Return the modified document
             ).populate('products.producto');
-
-            if (!cart) {
-
-                const newCart = new Cart({
-                    _id: cid,
-                    products: [{ producto: pid, quantity: 1 }],
-                });
-                const savedCart = await newCart.save();
-                return res.json(savedCart);
-            }
-
-            // At this point, 'cart' contains the cart with the updated quantity
-            res.json(cart);
-
-        } catch (err) {
-            console.log(err)
-            res.status(500).send({
-                status: 500,
-                message: err.message,
-            })
+            return res.json(savedCart);
         }
+        else {
+            res.json(cart)
+        }
+
+        // At this point, 'cart' contains the cart with the updated quantity
+
+
+    } catch (err) {
+        console.log(err)
+        res.status(500).send({
+            status: 500,
+            message: err.message,
+        })
     }
+}
+
+export const addProductsToCart = async (req, res) => {
+
+    const { cid } = req.params;
+    const { products } = req.body;
+
+    if (!Array.isArray(products)) {
+        return res.status(400).json({
+            status: 'error',
+            message: 'La propiedad "products" debe ser un arreglo.',
+        });
+    }
+
+    try {
+        const cart = await Cart.findOneAndUpdate(
+            { _id: cid },
+            {
+                $push: {
+                    products: { $each: products }
+                }
+            },
+            { new: true } // Return the modified document
+        ).populate('products.producto');
+
+        res.json(cart);
+
+    } catch (err) {
+        console.log(err)
+        res.status(500).send({
+            status: 500,
+            message: err.message,
+        })
+    }
+}

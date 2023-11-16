@@ -1,5 +1,5 @@
 import express from 'express';
-import { getCarts, createCart, getCartbyId, deleteCart, addProductToCart, deleteProductFromCart } from '../controller/cartController.js';
+import { getCarts, createCart, getCartbyId, deleteCart, addProductsToCart, addMoreProducts, deleteProductFromCart } from '../controller/cartController.js';
 const router = express.Router();
 
 // Import the ProductManager class
@@ -23,7 +23,8 @@ router.delete('/:cid', deleteCart)
 
 router.delete('/:cid/product/:pid', deleteProductFromCart)
 
+router.put('/:cid', addProductsToCart)
 // Create a new product or add products to Cart
-router.post('/:cid/product/:pid', addProductToCart)
+router.put('/:cid/product/:pid', addMoreProducts)
 
 export { router };
