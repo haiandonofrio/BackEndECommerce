@@ -1,0 +1,46 @@
+
+<div>
+    <h1>Bienvenido</h1>
+    {{#if admin }}
+    <h2>Usted es Administrador del sistema!</h2>
+    {{/if}}
+    <p>{{user._doc.first_name}}</p>
+    <p>{{user._doc.last_name}}</p>
+    <p>{{user._doc.email}}</p>
+    <p>{{user._doc.age}}</p>
+</div>
+
+<form id="logoutButton">
+    <input type="submit" name="logout" aria-label="Cerrar sesión">
+</form>
+
+{{#each products}}
+<tr class='p-5'>
+
+    <td>{{_doc.title}}</td>
+    <td>{{_doc.description}}</td>
+    <td>${{_doc.price}}</td>
+    <td>{{_doc.code}}</td>
+    <td>{{_doc.stock}}</td>
+    <td>{{_doc.status}}</td>
+    <td>{{_doc.thumbnails}}</td>
+    <td>{{_doc.category}}</td>
+</tr>
+{{!-- <button action='/api/product/{{_doc._id}}' , method='GETF'
+    onclick="addToCart('{{_id}}')">Ver detalle del producto</button> --}}
+{{!-- <a href="/product/:pid={{_doc._id}}">Ver detalles</a> --}}
+<a href="/api/product/{{_doc._id}}">Ver detalles</a>
+<form action='/api/cart/655550e17bb82ecac25bfa26/products/{{_doc._id}}'
+    method='POST'>
+
+    <button type='submit' class='btn btn-primary'>Agregar al carrito</button>
+</form>
+{{/each}}
+{{#if response.hasPrevPage }}
+<a href="{{response.prevLink}}">Anterior pagina</a>
+{{/if}}
+{{#if response.hasNextPage}}
+<a href="{{response.nextLink}}">Siguiente pagina</a>
+{{/if}}
+
+<script src="/js/logout.js"></script>

@@ -2,14 +2,14 @@
 
 import express from 'express';
 // import { productSchema } from '../models/productModel.js'
-import { ProductManager } from '../controller/ProductManager.js'; // Adjust the import path as needed
+// import { ProductManager } from '../controller/ProductManager.js'; // Adjust the import path as needed
 import { getProducts, saveProduct, getProductByID, deleteProduct, modifyProduct } from '../controller/productController.js';
 
 const router = express.Router();
 
 
 // Create an instance of the ProductManager class, specifying the path to the data file
-const productManager = new ProductManager('products.json'); // Specify the correct file path
+// const productManager = new ProductManager('products.json'); // Specify the correct file path
 
 // Middleware to parse JSON request bodies
 router.use(express.json());

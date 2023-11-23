@@ -2,7 +2,7 @@
 
 import mongoose from "mongoose"
 import { config } from "./config.js"
-
+import MongoStorage from 'connect-mongo'
 
 const { connect, connection } = mongoose
 
@@ -38,4 +38,14 @@ db.once('open', () => {
     console.log('Connected to MongoDB Atlas');
 });
 
-export { db }
+const storage = {
+    store: new MongoStorage({
+        mongoUrl: config.MONGODB_URI,
+        mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true }
+    }),
+    secret: 'CoderSecret',
+    resave: false,
+    saveUninitialized: false
+}
+
+export { db, storage }

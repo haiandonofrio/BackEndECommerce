@@ -1,6 +1,7 @@
 'use strict'
 
-import { Product } from '../models/productModel.js'
+import { Product } from '../models/productModel.js';
+import { Users } from "../models/usersModel.js";
 
 export const getProducts = async (req, res) => {
 
@@ -22,8 +23,6 @@ export const getProducts = async (req, res) => {
     }
 
     try {
-        // const totalCount = await Product.countDocuments(filter);
-        // const totalPages = Math.ceil(totalCount / limit);
         const options = {
             page: currPage, // Page number
             limit: qlimit, // Number of documents per page
@@ -33,10 +32,6 @@ export const getProducts = async (req, res) => {
         options.sort = { [sortField]: sortOrder };
 
         const results = await Product.paginate(filter, options)
-        // .find(filter)
-        // .skip((page - 1) * limit)
-        // .limit(limit)
-
 
 
         if (results.length === 0) {
@@ -76,7 +71,31 @@ export const getProducts = async (req, res) => {
             nextLink,
         };
 
-        res.status(200).json(response);
+        const { first_name, last_name, email, age } = req.session.user
+
+        const query = Users.where({
+            first_name,
+            last_name,
+            email,
+            age
+        })
+
+        const userData = await query.findOne();
+
+        console.log(userData)
+        let admin;
+        if (userData._doc.role === 'ADMIN') {
+            admin = true
+        } else {
+            admin = false
+        }
+        // res.status(200).json(response);
+        res.render('allProducts', {
+            response,
+            products: results.docs,
+            user: userData,
+            admin
+        });
     } catch (err) {
         console.log(err)
         res.status(500).send({
@@ -115,7 +134,7 @@ export const saveProduct = async (req, res) => {
 export const getProductByID = async (req, res) => {
     try {
         const query = Product.where({ _id: req.params.pid })
-        console.log(req.params)
+
         const products = await query.findOne()
 
         if (!products) {
@@ -125,11 +144,12 @@ export const getProductByID = async (req, res) => {
             })
         }
 
-        return res.status(200).send({
-            status: 200,
-            message: 'Ok',
-            data: products,
-        })
+        // return res.status(200).send({
+        //     status: 200,
+        //     message: 'Ok',
+        //     data: products,
+        res.render('productDetail', products)
+
     } catch (err) {
         console.log(err)
         res.status(500).send({
