@@ -11,7 +11,9 @@ import { db, storage } from './database.js';
 import cookieParser from 'cookie-parser';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
-import cors from 'cors'
+import cors from 'cors';
+import initializedPassport from './controller/passportController.js';
+import passport from 'passport'
 
 const server = express()
 const serverIo = createServer(server)
@@ -34,6 +36,10 @@ server.set('views', join(process.cwd(), 'src', 'views'));
 server.use(express.static(join(process.cwd(), '/public')));
 
 server.use(session(storage))
+
+initializedPassport()
+server.use(passport.initialize())
+server.use(passport.session())
 
 server.use('/api-doc', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 server.use('/api', router)

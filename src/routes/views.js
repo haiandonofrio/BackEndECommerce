@@ -13,6 +13,10 @@ router.get('/login', (req, res) => {
     res.render('login')
 })
 
+router.get('/restore', (req, res) => {
+    res.render('restore')
+})
+
 router.get('/', (req, res) => {
     res.render('profile', {
         user: req.session.user
