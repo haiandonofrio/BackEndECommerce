@@ -11,6 +11,7 @@ const config = {
     ADMINEMAIL: process.env.ADMINEMAIL,
     ADMINPASS: process.env.ADMINPASS,
     MONGODB_URI: process.env.MONGODB_URI || "mongodb://localhost/test",
+    PRIVATE_KEY: process.env.PRIVATE_KEY,
 }
 
 export { config }
