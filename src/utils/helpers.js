@@ -7,22 +7,19 @@ const removeExtensionFilename = filename => filename.split('.').shift()
 export { removeExtensionFilename }
 
 export const generateToken = (user) => {
-    const token = jwt.sign({ user }, config.PRIVATE_KEY, { expires: '1m' })
+    const token = jwt.sign({ user }, config.PRIVATE_KEY, { expires: '24h' })
     return token;
 }
 
-export const authToken = (req, res, next) => {
-    const authHeader = req.headers.authorization;
-    if (!authHeader) return res.status(401).send({ error: "Not Autthenticated" })
 
-    const token = authHeader.split(' ')[1];
-    jwt.verify(token, config.PRIVATE_KEY), (error, credentials) => {
-        if (error) return res.status(403).send({ error: 'Not authorized' })
-
-        req.user = credentials.user
-        next()
+export const cookieExtractor = (req) => {
+    let token = null;
+    if (req && req.cookies) { // si existe la cookie
+        token = req.cookies['currentToken'];
     }
-}
+    return token;
+};
+
 
 export const createHash = password => bcrypt.hashSync(password, bcrypt.genSaltSync(10)) // register
 

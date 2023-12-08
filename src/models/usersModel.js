@@ -11,6 +11,14 @@ const userSchema = new Schema({
     email: String,
     age: Number,
     password: String,
+    cart: {
+        type: {
+            id: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "carts"
+            }
+        }
+    },
     role: {
         type: String,
         default: 'USER' // Set default value to false for users who are not admins

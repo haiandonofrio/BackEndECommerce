@@ -1,12 +1,20 @@
 'use strict'
 
 import express from 'express';
+import { auth, authToken } from '../middlewares/auth.js';
+import { generateToken } from '../utils/helpers.js';
 import passport from 'passport';
+import passportControl from '../middlewares/passportControl.js';
 import { registerUser, loginUser, logoutUser, restorePassword } from "../controller/sessionController.js";
 
 const router = express.Router()
 router.use(express.json())
 router.use(express.urlencoded({ extended: true }))
+
+const authMid = [
+    passportControl('jwt',
+        auth('user'))
+]
 
 router.get('/github', passport.authenticate('github', { scope: ['user: email'] }),
     async (req, res) => {
@@ -29,7 +37,7 @@ router.get('/failregister', async (req, res) => {
     res.send({ error: 'failed' })
 })
 
-router.post('/login', passport.authenticate('login', {
+router.post('/login', passport.authenticate('current', {
     failureRedirect: '/failLogin'
 }), async (req, res) => {
     const { email, password } = req.body
@@ -49,6 +57,11 @@ router.get('/failLogin', async (req, res) => {
 router.delete('/logout', logoutUser)
 
 router.post('/restore', restorePassword)
+
+
+router.get('/current', authMid, (req, res) => {
+    res.json({ payload: req.user });
+});
 
 // Reemplazados por estrategia de Passport
 // router.post('/login', loginUser)
