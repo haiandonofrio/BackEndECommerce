@@ -7,7 +7,6 @@ import local from 'passport-local';
 import { Users } from '../models/usersModel.js';
 import { cookieExtractor } from '../utils/helpers.js';
 import { config } from '../config.js';
-import { Users } from "../models/usersModel.js";
 import { createHash, isValidPassword } from '../utils/helpers.js';
 
 const LocalStrategy = local.Strategy;
@@ -35,6 +34,7 @@ const initializedPassport = () => {
             }
         }
     ))
+    
     passport.use('github', new GitHubStrategy({
         clientID: config.GITHUB_AUTH_ID,
         clientSecret: config.GITHUB_SECRET,

@@ -1,7 +1,7 @@
 'use strict'
 
 import express from 'express';
-import { auth, authToken } from '../middlewares/auth.js';
+// import { auth } from '../middlewares/auth.js';
 import { generateToken } from '../utils/helpers.js';
 import passport from 'passport';
 import passportControl from '../middlewares/passportControl.js';
@@ -11,10 +11,10 @@ const router = express.Router()
 router.use(express.json())
 router.use(express.urlencoded({ extended: true }))
 
-const authMid = [
-    passportControl('jwt',
-        auth('user'))
-]
+// const authMid = [
+//     passportControl('jwt',
+//         // auth('user'))
+// ]
 
 router.get('/github', passport.authenticate('github', { scope: ['user: email'] }),
     async (req, res) => {
@@ -40,6 +40,7 @@ router.get('/failregister', async (req, res) => {
 router.post('/login', passport.authenticate('current', {
     failureRedirect: '/failLogin'
 }), async (req, res) => {
+    const access_token = generateToken({ email, role: 'user' });
     const { email, password } = req.body
     if (!req.user) return res.status(400).send({ status: "error", error: "Incomplete Values" });
 
@@ -59,7 +60,7 @@ router.delete('/logout', logoutUser)
 router.post('/restore', restorePassword)
 
 
-router.get('/current', authMid, (req, res) => {
+router.get('/current', passportControl('current'), (req, res) => {
     res.json({ payload: req.user });
 });
 
