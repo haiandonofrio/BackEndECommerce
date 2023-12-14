@@ -22,19 +22,20 @@ const initializedPassport = () => {
         },
         async (jwt_payload, done) => {
             try {
-                const user = await Users.findOne({ email: jwt_payload.email });
+                const user = await Users.findOne({ email: jwt_payload.user });
+
                 if (!user) {
                     return done(null, false, { messsages: 'User not found' });
                 }
 
-                return done(null, jwt_payload);
+                return done(null, user);
             }
             catch (error) {
                 return done(error);
             }
         }
     ))
-    
+
     passport.use('github', new GitHubStrategy({
         clientID: config.GITHUB_AUTH_ID,
         clientSecret: config.GITHUB_SECRET,
@@ -53,7 +54,7 @@ const initializedPassport = () => {
                     email: profile._json.email,
                     age: '',
                     password: '',
-                    cart: ''
+                    cart: []
                 }
                 let result = await Users.create(newUser);
                 return done(null, result)
@@ -77,7 +78,7 @@ const initializedPassport = () => {
                     email,
                     age,
                     password: createHash(password),
-                    cart: ''
+                    cart: []
                 }
                 let result = await Users.create(newUser);
                 return done(null, result)
