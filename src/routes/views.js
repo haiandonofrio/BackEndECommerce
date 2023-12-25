@@ -5,7 +5,6 @@ import { Router } from "express";
 const router = Router()
 
 router.get('/register', (req, res) => {
-    console.log('pase1')
     res.render('register')
 })
 
