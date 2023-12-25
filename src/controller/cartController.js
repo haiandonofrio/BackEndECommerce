@@ -1,10 +1,11 @@
 'use strict'
 
-import { Cart } from '../models/cartModel.js'
+import { Cart } from '../models/cartModel.js';
+import cartService from '../services/cartService.js';
 
 export const getCarts = async (req, res) => {
     try {
-        const carts = await Cart.find({}).select(['-__v']).populate('products.producto');
+        const carts = await cartService.getCarts()
 
         if (!carts) {
             return res.status(404).send({
@@ -41,11 +42,9 @@ export const getCarts = async (req, res) => {
 
 export const createCart = async (req, res) => {
     try {
-        const cart = new Cart({
-            products: [],
-        })
 
-        const cartSave = await cart.save()
+
+        const cartSave = await cartService.createCart()
         res.status(201).send({
             cartSave,
         })
@@ -60,8 +59,8 @@ export const createCart = async (req, res) => {
 
 export const getCartbyId = async (req, res) => {
     try {
-        const query = Cart.where({ _id: req.params.cid })
-        const carts = await query.findOne().populate('products.producto');
+        // const query = Cart.where({ _id: req.params.cid })
+        const carts = await cartService.getCartId(req.params.cid)
 
         if (!carts) {
             return res.status(404).send({
@@ -77,13 +76,7 @@ export const getCartbyId = async (req, res) => {
 
         }));
         res.render('cartDetail', { products: productData });
-        // res.render('cartDetails', {products:carts.products} );
 
-        // res.status(200).send({
-        //     status: 200,
-        //     message: 'Ok',
-        //     data: carts,
-        // })
     } catch (err) {
         console.log(err)
         res.status(500).send({
@@ -96,7 +89,7 @@ export const getCartbyId = async (req, res) => {
 export const deleteCart = async (req, res) => {
     try {
         // const query = Product.where({ id: req.params.pid });
-        const carts = await Cart.deleteOne({ _id: req.params.cid }).populate('products.producto');
+        const carts = await cartService.deleteCart(req.params.pid)
 
         if (!carts) {
             return res.status(404).send({
@@ -121,16 +114,7 @@ export const deleteCart = async (req, res) => {
 export const deleteProductFromCart = async (req, res) => {
     try {
 
-
-        const cartId = req.params.cid;
-        const productId = req.params.pid;
-
-        // Buscar el carrito por su ID y actualizarlo
-        const updatedCart = await Cart.findByIdAndUpdate(
-            cartId,
-            { $pull: { products: { producto: productId } } },
-            { new: true }
-        ).populate('products.producto');
+        const updatedCart = await cartService.deleteProduct(req.params)
 
         if (updatedCart) {
             console.log('Product deleted from cart', updatedCart);
@@ -151,49 +135,23 @@ export const deleteProductFromCart = async (req, res) => {
 
 export const addProductToCart = async (req, res) => {
 
-    const { cid, pid } = req.params;
-    const { quantity } = req.body;
+
 
     try {
-        const cart = await Cart.findOneAndUpdate(
-            { _id: cid, 'products.producto': pid },
-            { $inc: { 'products.$.quantity': quantity || 1 } },
-            { new: true } // Return the modified document
-        ).populate('products.producto');
+        const { quantity } = req.body;
 
-        if (!cart) {
-            const newCart = {
-                producto: pid,
-                quantity: quantity || 1
-            };
-            const savedCart = await Cart.findOneAndUpdate({
-                _id: cid
-            },
-                { $push: { products: newCart } },
-                { new: true } // Return the modified document
-            ).populate('products.producto');
+        const cart = await cartService.addProduct(req.params, quantity)
 
-            // return res.json(savedCart);
-            const productData = savedCart.products.map(product => ({
-                title: product.producto.title,
-                description: product.producto.description,
-                quantity: product.quantity,
-                price: product.producto.price * product.quantity,
+        // res.json(cart);
+        const productData = cart.products.map(product => ({
+            title: product.producto.title,
+            description: product.producto.description,
+            quantity: product.quantity,
+            price: product.producto.price * product.quantity,
 
-            }));
-            res.render('cartDetail', { products: productData });
+        }));
+        res.render('cartDetail', { products: productData });
 
-        } else {
-            // res.json(cart);
-            const productData = cart.products.map(product => ({
-                title: product.producto.title,
-                description: product.producto.description,
-                quantity: product.quantity,
-                price: product.producto.price * product.quantity,
-
-            }));
-            res.render('cartDetail', { products: productData });
-        }
 
         // At this point, 'cart' contains the cart with the updated quantity
     } catch (err) {
@@ -206,37 +164,26 @@ export const addProductToCart = async (req, res) => {
 }
 export const updateProduct = async (req, res) => {
     try {
-        // 1. Validar la entrada
         const { products } = req.body;
 
-        if (!Array.isArray(products)) {
-            return res.status(400).json({
-                status: 'error',
-                message: 'La propiedad "products" debe ser un arreglo.',
-            });
-        }
-
-        // 2. Buscar el carrito por ID
         const cartId = req.params.cid;
-        const existingCart = await Cart.findById(cartId);
 
-        if (!existingCart) {
-            return res.status(404).json({
-                status: 'error',
-                message: 'Carrito no encontrado.',
+        const updatedCart = await cartService.updateProduct(products, cartId)
+
+        if (updatedCart) {
+            res.status(200).json({
+                status: 'success',
+                message: 'Carrito actualizado con éxito.',
+                data: updatedCart,
             });
-        }
+        } else {
+            res.status(404).json({
+                status: 'error',
+                message: `No se encontró carrito ${cartId} para actualizar`,
+                data: updatedCart,
+            });
+}
 
-        // 3. Actualizar el carrito
-        existingCart.products = products;
-        const updatedCart = await existingCart.save();
-
-        // 4. Responder con la respuesta actualizada
-        res.status(200).json({
-            status: 'success',
-            message: 'Carrito actualizado con éxito.',
-            data: updatedCart,
-        });
     } catch (error) {
         console.error('Error actualizando el carrito:', error);
         res.status(500).json({

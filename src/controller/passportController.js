@@ -8,6 +8,7 @@ import { Users } from '../models/usersModel.js';
 import { cookieExtractor } from '../utils/helpers.js';
 import { config } from '../config.js';
 import { createHash, isValidPassword } from '../utils/helpers.js';
+import UserService from '../services/sessionService.js'
 
 const LocalStrategy = local.Strategy;
 const GitHubStrategy = github.Strategy;
@@ -22,7 +23,8 @@ const initializedPassport = () => {
         },
         async (jwt_payload, done) => {
             try {
-                const user = await Users.findOne({ email: jwt_payload.user });
+                // const user = await Users.findOne({ email: jwt_payload.user });
+                const user = UserService.getUser(jwt_payload.user)
 
                 if (!user) {
                     return done(null, false, { messsages: 'User not found' });
@@ -43,7 +45,8 @@ const initializedPassport = () => {
     },
         async (accessToken, refreshToken, profile, done) => {
             try {
-                const user = await Users.findOne({ email: profile._json.email });
+                // const user = await Users.findOne({ email: profile._json.email });
+                const user = await UserService.getUser(profile._json.email)
                 console.log('github strategy')
                 if (user) {
                     return done(null, user)
@@ -68,7 +71,8 @@ const initializedPassport = () => {
         async (req, username, password, done) => {
             const { first_name, last_name, email, age } = req.body;
             try {
-                const user = await Users.findOne({ email: username });
+                // const user = await Users.findOne({ email: username });
+                const user = await UserService.getUser(username)
                 if (user) {
                     return done(null, false)
                 }
@@ -80,7 +84,7 @@ const initializedPassport = () => {
                     password: createHash(password),
                     cart: []
                 }
-                let result = await Users.create(newUser);
+                let result = await UserService.createUser(newUser)
                 return done(null, result)
             } catch (error) {
                 done('User Not fount' + error)
@@ -92,7 +96,7 @@ const initializedPassport = () => {
         async (req, email, password, done) => {
 
             try {
-                const user = await Users.findOne({ email: email });
+                const user = await UserService.getUser(email)
                 console.log(' User login ' + user)
                 if (!user) {
                     return done(null, false)
@@ -115,7 +119,8 @@ const initializedPassport = () => {
     })
 
     passport.deserializeUser(async (id, done) => {
-        let user = await Users.findById(id)
+        let user = await UserService.getId(id)
+        // let user = await Users.findById(id)
         done(null, user)
     })
 }

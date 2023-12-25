@@ -11,10 +11,6 @@ const router = express.Router()
 router.use(express.json())
 router.use(express.urlencoded({ extended: true }))
 
-// const authMid = [
-//     passportControl('jwt',
-//         // auth('user'))
-// ]
 
 router.get('/github', passport.authenticate('github', { scope: ['user: email'] }),
     async (req, res) => {
@@ -68,9 +64,5 @@ router.get('/current', passportControl('current'), (req, res) => {
     res.json({ payload: req.user });
 });
 
-// Reemplazados por estrategia de Passport
-// router.post('/login', loginUser)
-
-// router.post('/register', registerUser)
 
 export { router };

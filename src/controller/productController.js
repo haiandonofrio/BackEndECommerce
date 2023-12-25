@@ -2,37 +2,41 @@
 
 import { Product } from '../models/productModel.js';
 import { Users } from "../models/usersModel.js";
+import productService from '../services/productService.js';
+import ProductService from "../services/productService.js";
+import UserService from "../services/sessionService.js"
 
 export const getProducts = async (req, res) => {
 
 
-    const sortField = req.query.sort || 'price';
-    const sortOrder = parseInt(req.query.order === 'desc' ? '-1' : '1');
+    // const sortField = req.query.sort || 'price';
+    // const sortOrder = parseInt(req.query.order === 'desc' ? '-1' : '1');
 
-    const currPage = parseInt(req.query.page) || 1;
-    const qlimit = parseInt(req.query.limit, 10) || 3;;
+    // const currPage = parseInt(req.query.page) || 1;
+    // const qlimit = parseInt(req.query.limit, 10) || 3;;
 
-    const { category, minStock } = req.query; // Assuming query parameters for category and minStock
+    // const { category, minStock } = req.query; // Assuming query parameters for category and minStock
 
-    const filter = {};
-    if (category) {
-        filter.category = category;
-    }
-    if (minStock) {
-        filter.stock = { $gt: parseInt(minStock) || 0 };
-    }
+    // const filter = {};
+    // if (category) {
+    //     filter.category = category;
+    // }
+    // if (minStock) {
+    //     filter.stock = { $gt: parseInt(minStock) || 0 };
+    // }
 
     try {
-        const options = {
-            page: currPage, // Page number
-            limit: qlimit, // Number of documents per page
+        // const options = {
+        //     page: currPage, // Page number
+        //     limit: qlimit, // Number of documents per page
 
-        };
+        // };
 
-        options.sort = { [sortField]: sortOrder };
+        // options.sort = { [sortField]: sortOrder };
 
-        const results = await Product.paginate(filter, options)
+        // const results = await Product.paginate(filter, options)
 
+        const results = ProductService.getProducts(req.query)
 
         if (results.length === 0) {
             const responseError = {
@@ -73,14 +77,14 @@ export const getProducts = async (req, res) => {
 
         const { first_name, last_name, email, age } = req.session.user
 
-        const query = Users.where({
-            first_name,
-            last_name,
-            email,
-            age
-        })
+        // const query = Users.where({
+        //     first_name,
+        //     last_name,
+        //     email,
+        //     age
+        // })
 
-        const userData = await query.findOne();
+        const userData = await UserService.getUser(email);
 
         console.log(userData)
         let admin;
@@ -107,18 +111,18 @@ export const getProducts = async (req, res) => {
 
 export const saveProduct = async (req, res) => {
     try {
-        const product = new Product({
-            title: req.body.title,
-            description: req.body.description,
-            price: parseFloat(req.body.price),
-            thumbnails: req.body.thumbnails,
-            code: req.body.code,
-            stock: req.body.stock,
-            status: req.body.status,
-            category: req.body.category,
-        })
+        // const product = new Product({
+        //     title: req.body.title,
+        //     description: req.body.description,
+        //     price: parseFloat(req.body.price),
+        //     thumbnails: req.body.thumbnails,
+        //     code: req.body.code,
+        //     stock: req.body.stock,
+        //     status: req.body.status,
+        //     category: req.body.category,
+        // })
 
-        const productSave = await product.save()
+        const productSave = await productService.saveProduct(req.body)
         res.status(201).send({
             productSave,
         })
@@ -133,9 +137,9 @@ export const saveProduct = async (req, res) => {
 
 export const getProductByID = async (req, res) => {
     try {
-        const query = Product.where({ _id: req.params.pid })
+        // const query = Product.where({ _id: req.params.pid })
 
-        const products = await query.findOne()
+        const products = await productService.getProductId(req.params.pid)
 
         if (!products) {
             return res.status(404).send({
@@ -161,8 +165,8 @@ export const getProductByID = async (req, res) => {
 
 export const deleteProduct = async (req, res) => {
     try {
-        // const query = Product.where({ id: req.params.pid });
-        const products = await Product.deleteOne({ _id: req.params.pid })
+        const products = await productService.deleteProduct(req.params.pid)
+        // const products = await Product.deleteOne({ _id: req.params.pid })
 
         if (!products) {
             return res.status(404).send({
@@ -187,26 +191,11 @@ export const deleteProduct = async (req, res) => {
 
 export const modifyProduct = async (req, res) => {
     try {
-        // const query = Product.where({ id: req.params.pid });
+
         const filter = { _id: req.params.pid }
 
-        const update = {
-            title: req.body.title,
-            description: req.body.description,
-            price: req.body.price,
-            thumbnails: req.body.thumbnails,
-            code: req.body.code,
-            stock: req.body.stock,
-            status: req.body.status,
-            category: req.body.category,
-        }
 
-        // `doc` is the document _after_ `update` was applied because of
-        // `returnOriginal: false`
-        const products = await Product.findOneAndUpdate(filter, update, {
-            returnOriginal: false,
-        })
-
+        const products = await productService.updateProduct(req.body)
         if (!products) {
             return res.status(404).send({
                 status: 404,
