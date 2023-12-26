@@ -1,6 +1,8 @@
+'use strict'
+
 import { Product } from '../models/productModel.js'
 
-class ProductService {
+class productService {
     static async getProducts(query) {
         try {
             const sortField = query.sort || 'price';
@@ -108,4 +110,4 @@ class ProductService {
         }
     }
 }
-export default new ProductService();
+export default productService;

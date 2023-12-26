@@ -1,7 +1,7 @@
 'use strict'
 
 import { Users } from "../models/usersModel.js";
-import UserService from '../services/sessionService.js';
+import userService from '../services/sessionService.js';
 import { config } from '../config.js';
 import { createHash, isValidPassword } from '../utils/helpers.js';
 
@@ -24,7 +24,7 @@ export const registerUser = async (req, res) => {
 
     const { first_name, last_name, email, age, password } = req.body
     // console.log('Si pase por aqui')
-    const existe = UserService.getUser(email)
+    const existe = userService.getUser(email)
 
     let role;
     if (email === config.ADMINEMAIL && password === config.ADMINPASS) {
@@ -51,7 +51,7 @@ export const registerUser = async (req, res) => {
 export const loginUser = async (req, res) => {
     const { email, password } = req.body
     // console.log('Si pase por aqui /////')
-    const user = UserService.getUser(email)
+    const user = userService.getUser(email)
 
     if (!user) return res.status(400).send({ status: 'error', error: 'Error Credentials' })
 

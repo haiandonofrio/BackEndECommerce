@@ -2,41 +2,16 @@
 
 import { Product } from '../models/productModel.js';
 import { Users } from "../models/usersModel.js";
-import productService from '../services/productService.js';
-import ProductService from "../services/productService.js";
-import UserService from "../services/sessionService.js"
+import productService from "../services/productService.js";
+import userService from "../services/sessionService.js"
+
+// const productServiceInstance = new productService();
 
 export const getProducts = async (req, res) => {
 
-
-    // const sortField = req.query.sort || 'price';
-    // const sortOrder = parseInt(req.query.order === 'desc' ? '-1' : '1');
-
-    // const currPage = parseInt(req.query.page) || 1;
-    // const qlimit = parseInt(req.query.limit, 10) || 3;;
-
-    // const { category, minStock } = req.query; // Assuming query parameters for category and minStock
-
-    // const filter = {};
-    // if (category) {
-    //     filter.category = category;
-    // }
-    // if (minStock) {
-    //     filter.stock = { $gt: parseInt(minStock) || 0 };
-    // }
-
     try {
-        // const options = {
-        //     page: currPage, // Page number
-        //     limit: qlimit, // Number of documents per page
-
-        // };
-
-        // options.sort = { [sortField]: sortOrder };
-
-        // const results = await Product.paginate(filter, options)
-
-        const results = ProductService.getProducts(req.query)
+        const currPage = parseInt(req.query.page) || 1;
+        const results = await productService.getProducts(req.query)
 
         if (results.length === 0) {
             const responseError = {
@@ -75,16 +50,9 @@ export const getProducts = async (req, res) => {
             nextLink,
         };
 
-        const { first_name, last_name, email, age } = req.session.user
+        const { email } = req.session.user
 
-        // const query = Users.where({
-        //     first_name,
-        //     last_name,
-        //     email,
-        //     age
-        // })
-
-        const userData = await UserService.getUser(email);
+        const userData = await userService.getUser(email);
 
         console.log(userData)
         let admin;

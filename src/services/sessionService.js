@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt'
 import { Users } from '../models/usersModel.js'
 
-class UserService {
+class userService {
     static async createUser(data) {
         try {
             data.password = bcrypt.hashSync(data.password, bcrypt.genSaltSync(10))
@@ -26,7 +26,7 @@ class UserService {
 
     static async getId(id) {
         try {
-            
+
             const result = await Users.findById(id)
 
             return result
@@ -36,4 +36,4 @@ class UserService {
         }
     }
 }
-export default new UserService();
+export default userService;

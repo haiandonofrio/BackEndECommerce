@@ -128,4 +128,4 @@ class cartService {
         }
     }
 }
-export default new cartService();
+export default cartService;
