@@ -21,7 +21,10 @@ const cartSchema = new Schema({
         default: [],
         required: true,
     },
-
+    purchaser:  {
+        type: String,
+        required: true,
+    },
     createdAt: { type: Date, default: Date.now },
     UpdatedAt: { type: Date, default: Date.now },
 })

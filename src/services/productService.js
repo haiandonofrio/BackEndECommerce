@@ -1,6 +1,8 @@
 'use strict'
 
-import { Product } from '../models/productModel.js'
+import { Product } from '../models/Models/productModel.js'
+import { getDAOS } from "../models/daos/index.dao.js";
+const { productsDao } = getDAOS();
 
 class productService {
     static async getProducts(query) {
@@ -29,7 +31,7 @@ class productService {
 
             options.sort = { [sortField]: sortOrder };
 
-            const results = await Product.paginate(filter, options)
+            const results = await productsDao.getProducts(filter, options)
 
             return results
 
@@ -51,7 +53,7 @@ class productService {
                 category:  product.category,
             })
 
-            const productSave = await newProduct.save()
+            const productSave = await productsDao.createProducts(newProduct)
 
             return productSave
 
@@ -63,9 +65,7 @@ class productService {
     static async getProductId(id) {
         try {
 
-            const query = Product.where({ _id: id })
-
-            const result = await query.findOne()
+            const result = await productsDao.getProductsById(id)
 
             return result
 
@@ -77,7 +77,7 @@ class productService {
     static async deleteProduct(id) {
         try {
 
-            const result = await Product.deleteOne({ _id: id })
+            const result = await productsDao.deleteProduct(id)
 
             return result
 
@@ -101,9 +101,7 @@ class productService {
 
             // `doc` is the document _after_ `update` was applied because of
             // `returnOriginal: false`
-            const productUpdated = await Product.findOneAndUpdate(filter, update, {
-                returnOriginal: false,
-            })
+            const productUpdated = await productsDao.updateProducts(product._id,update)
             return productUpdated
         } catch (error) {
             throw new Error(error.message)

@@ -1,7 +1,7 @@
 import passport from "passport";
 import { generateToken, checkUser, isValidPassword } from "../utils/helpers.js";
 
-const passportControl = (strategy) => {
+const passportControl = (strategy,operation) => {
     return (req, res, next) => {
         passport.authenticate('current', { session: false }, (error, user, info) => {
             if (error) {

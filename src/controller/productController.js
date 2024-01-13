@@ -1,7 +1,7 @@
 'use strict'
 
-import { Product } from '../models/productModel.js';
-import { Users } from "../models/usersModel.js";
+import { Product } from '../models/Models/productModel.js';
+import { Users } from "../models/Models/usersModel.js";
 import productService from "../services/productService.js";
 import userService from "../services/sessionService.js"
 

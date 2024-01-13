@@ -1,7 +1,9 @@
 'use strict'
 
-import { Cart } from '../models/cartModel.js';
+import { Cart } from '../models/Models/cartModel.js';
 import cartService from '../services/cartService.js';
+import productService from '../services/productService.js';
+import { generateUniqueCode } from '../utils/helpers.js';
 
 export const getCarts = async (req, res) => {
     try {
@@ -43,8 +45,7 @@ export const getCarts = async (req, res) => {
 export const createCart = async (req, res) => {
     try {
 
-
-        const cartSave = await cartService.createCart()
+        const cartSave = await cartService.createCart(req.session.user.email)
         res.status(201).send({
             cartSave,
         })
@@ -113,8 +114,8 @@ export const deleteCart = async (req, res) => {
 }
 export const deleteProductFromCart = async (req, res) => {
     try {
-
-        const updatedCart = await cartService.deleteProduct(req.params)
+        const { cid, pid } = req.params;
+        const updatedCart = await cartService.deleteProduct(cid, pid)
 
         if (updatedCart) {
             console.log('Product deleted from cart', updatedCart);
@@ -182,7 +183,7 @@ export const updateProduct = async (req, res) => {
                 message: `No se encontró carrito ${cartId} para actualizar`,
                 data: updatedCart,
             });
-}
+        }
 
     } catch (error) {
         console.error('Error actualizando el carrito:', error);
@@ -190,5 +191,78 @@ export const updateProduct = async (req, res) => {
             status: 'error',
             message: 'Error interno del servidor.',
         });
+    }
+};
+
+export const purchaseCart = async (req, res) => {
+
+    try {
+
+        const cartId = req.params.cid;
+
+        // Obtener el carrito
+        const cart = await cartService.getCartId(cartId)
+
+        const processedProducts = [];
+        const unprocessedProductIds = [];
+        // Verificar el stock y actualizar la base de datos
+        for (const cartProduct of cart.products) {
+
+            const productId = cartProduct.producto;
+            const requestedQuantity = cartProduct.quantity;
+
+            const product = await productService.getProductId(productId);
+
+            if (product.stock >= requestedQuantity && product.status !== false) {
+                // Suficiente stock, restar del stock y continuar
+                product.stock -= requestedQuantity;
+                if (product.stock === 0) {
+                    product.status = false;
+                }
+                const product = await productService.getProductId(productId);
+                const productUpdated = await updateProduct.getProductId(product);// Llenar el array con la información del producto procesado
+                processedProducts.push({
+                    //   productId: product._id,
+                    product: product.title,
+                    quantity: requestedQuantity,
+                    //   unitPrice: product.price,
+                });
+
+                // Quitar el producto del array 'products' en el carrito
+                await cartService.deleteProduct(cartId, productId)
+
+            } else {
+                // No hay suficiente stock, agregar el ID del producto al array de no procesados
+                unprocessedProductIds.push(`No hay Stock disponible de: ${cartProduct._doc.title}`);
+            }
+        }
+
+        if (processedProducts.length > 0) {
+            // Si hay productos procesados, generar el ticket
+            const ticket = {
+                code: generateUniqueCode(),
+                purchase_datetime: new Date(),
+                amount: processedProducts.reduce((total, product) => total + product.quantity * product.unitPrice, 0),
+                purchaser: cart.purchaser,
+                processedProducts,
+            };
+
+
+            // Puedes hacer algo con el ticket, como guardarlo en la base de datos o devolverlo como respuesta
+            // En este ejemplo, simplemente lo devolvemos como respuesta
+            if (unprocessedProductIds.length > 0) {
+                res.status(200).json({ message: 'Compra exitosa', ticket, unprocessedProductIds });
+            } else {
+                res.status(200).json({ message: 'Compra exitosa', ticket })
+            }
+        }
+
+        // if (unprocessedProductIds.length > 0) {
+        //   // Si hay productos no procesados, devolver sus IDs
+        //   res.status(400).json({ error: 'Algunos productos no tienen suficiente stock', unprocessedProductIds });
+        // }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error interno del servidor' });
     }
 };

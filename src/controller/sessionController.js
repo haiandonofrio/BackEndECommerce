@@ -1,6 +1,6 @@
 'use strict'
 
-import { Users } from "../models/usersModel.js";
+import { Users } from "../models/Models/usersModel.js";
 import userService from '../services/sessionService.js';
 import { config } from '../config.js';
 import { createHash, isValidPassword } from '../utils/helpers.js';

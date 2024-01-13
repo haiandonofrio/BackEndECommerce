@@ -1,9 +1,11 @@
-import { Cart } from '../models/cartModel.js'
+import { Cart } from '../models/Models/cartModel.js';
+import { getDAOS } from "../models/daos/index.dao.js";
+const { cartDao } = getDAOS();
 
 class cartService {
     static async getCarts() {
         try {
-            const results = await Cart.find({}).select(['-__v']).populate('products.producto');
+            const results = await cartDao.getCarts();
             return results
 
         } catch (error) {
@@ -11,13 +13,14 @@ class cartService {
         }
     }
 
-    static async createCart() {
+    static async createCart(email) {
         try {
             const cart = new Cart({
+                purchaser: email,
                 products: [],
             })
 
-            const result = await cart.save()
+            const result = await cartDao.createCarts(cart)
 
             return result
 
@@ -29,9 +32,7 @@ class cartService {
     static async getCartId(id) {
         try {
 
-            const query = Cart.where({ _id: id })
-
-            const result = await query.findOne().populate('products.producto');
+            const result = await cartDao.getCartsById(id);
 
             return result
 
@@ -43,7 +44,7 @@ class cartService {
     static async deleteCart(id) {
         try {
 
-            const result = await Cart.deleteOne({ _id: id }).populate('products.producto');
+            const result =  await cartDao.deleteCart(id);
 
             return result
 
@@ -52,17 +53,11 @@ class cartService {
         }
     }
 
-    static async deleteProduct(product) {
+    static async deleteProduct(cartId,productId) {
         try {
-            const cartId = product.cid;
-            const productId = product.pid;
 
             // Buscar el carrito por su ID y actualizarlo
-            const result = await Cart.findByIdAndUpdate(
-                cartId,
-                { $pull: { products: { producto: productId } } },
-                { new: true }
-            ).populate('products.producto');
+            const result = await cartDao.deleteProduct(cartId,productId)
             return result
         } catch (error) {
             throw new Error(error.message)

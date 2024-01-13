@@ -4,7 +4,7 @@ import passport from 'passport';
 import passportJwt from 'passport-jwt'
 import github from 'passport-github2';
 import local from 'passport-local';
-import { Users } from '../models/usersModel.js';
+import { Users } from '../models/Models/usersModel.js';
 import { cookieExtractor } from '../utils/helpers.js';
 import { config } from '../config.js';
 import { createHash, isValidPassword } from '../utils/helpers.js';

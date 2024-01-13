@@ -1,6 +1,6 @@
 'use strict'
 
-import { Message } from "../models/messageModel.js"
+import { Message } from "../models/Models/messageModel.js"
 
 export const getMessage = async (req, res) => {
 

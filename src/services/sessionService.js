@@ -1,11 +1,13 @@
 import bcrypt from 'bcrypt'
-import { Users } from '../models/usersModel.js'
+import { getDAOS } from "../models/daos/index.dao.js";
+const { usersDao } = getDAOS();
+
 
 class userService {
     static async createUser(data) {
         try {
             data.password = bcrypt.hashSync(data.password, bcrypt.genSaltSync(10))
-            const result = await Users.create(data)
+            const result = await usersDao.createUser(data)
             return result
         } catch (error) {
             throw new Error(error.message)
@@ -15,7 +17,7 @@ class userService {
     static async getUser(email) {
         try {
             console.log(email)
-            const result = await Users.findOne({ email }).lean()
+            const result = await usersDao.getUsersByEmail(email)
 
             return result
 
@@ -27,7 +29,7 @@ class userService {
     static async getId(id) {
         try {
 
-            const result = await Users.findById(id)
+            const result = await usersDao.getUserById(id)
 
             return result
 
