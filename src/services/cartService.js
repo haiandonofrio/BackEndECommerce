@@ -1,5 +1,5 @@
 import { Cart } from '../models/Models/cartModel.js';
-import { SUCCESS, ERROR } from './messages.js';
+import { SUCCESS, ERROR } from '../commons/errorMessages.js'
 import { getDAOS } from "../models/DAO/indexDAO.js";
 const { cartDao } = getDAOS();
 
