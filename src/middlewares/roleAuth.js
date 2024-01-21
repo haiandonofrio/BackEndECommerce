@@ -1,4 +1,5 @@
 import passport from "passport";
+import { ERROR, SUCCESS } from "../commons/errorMessages.js";
 import { generateToken, checkUser, isValidPassword } from "../utils/helpers.js";
 
 const roleAuth = (strategy, adminRequired) => {
@@ -9,10 +10,12 @@ const roleAuth = (strategy, adminRequired) => {
             }
             if (user) {
                 if (user._doc.role !== 'ADMIN' && adminRequired === true) {
-                    throw new Error("Solo un administrador puede realizar la acción solicitada");
-                }else if (user._doc.role !== 'USER' && adminRequired === false) {
-                    throw new Error("Solo un usuario puede realizar la acción solicitada");
+                    throw new Error(ERROR.ADMIN_ACTION_REQUIRED);
+                } else if (user._doc.role !== 'USER' && adminRequired === false) {
+                    throw new Error(ERROR.USER_ACTION_REQUIRED);
                 }
+                // Add success message if needed
+                // res.status(200).send({ status: "success", message: adminRequired ? SUCCESS.ADMIN_ACTION_ALLOWED : SUCCESS.USER_ACTION_ALLOWED });
             }
 
         }

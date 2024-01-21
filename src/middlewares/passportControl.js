@@ -1,7 +1,8 @@
 import passport from "passport";
 import { generateToken, checkUser, isValidPassword } from "../utils/helpers.js";
+import { ERROR, SUCCESS } from "../commons/errorMessages.js"; 
 
-const passportControl = (strategy,operation) => {
+const passportControl = (strategy, operation) => {
     return (req, res, next) => {
         passport.authenticate('current', { session: false }, (error, user, info) => {
             if (error) {
@@ -21,7 +22,7 @@ const passportControl = (strategy,operation) => {
 
                     if (checkUsers) {
                         if (!isValidPassword(checkUsers._doc, req.body.password)) {
-                            throw new Error("Incorrect password");
+                            throw new Error(ERROR.INCORRECT_PASSWORD);
                         }
 
                         const access_token = generateToken(req.body.email);
@@ -44,7 +45,7 @@ const passportControl = (strategy,operation) => {
                     });
             } else {
                 if (!isValidPassword(user._doc, req.body.password)) {
-                    return res.status(403).send({ status: "error", error: "Incorrect password" });
+                    return res.status(403).send({ status: "error", error: ERROR.INCORRECT_PASSWORD });
                 }
                 req.user = user;
                 next();

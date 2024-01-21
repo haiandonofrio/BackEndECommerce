@@ -1,4 +1,5 @@
 import { Cart } from '../models/Models/cartModel.js';
+import { SUCCESS, ERROR } from './messages.js';
 import { getDAOS } from "../models/DAO/indexDAO.js";
 const { cartDao } = getDAOS();
 
@@ -44,20 +45,28 @@ class cartService {
     static async deleteCart(id) {
         try {
 
-            const result =  await cartDao.deleteCart(id);
+            const result = await cartDao.deleteCart(id);
+
+            if (!result) {
+                throw new Error(ERROR.CART_NOT_FOUND);
+            }
 
             return result
 
         } catch (error) {
-            throw new Error(error.message)
+            throw new Error(ERROR.CART_DELETE_ERROR)
         }
     }
 
-    static async deleteProduct(cartId,productId) {
+    static async deleteProduct(cartId, productId) {
         try {
 
             // Buscar el carrito por su ID y actualizarlo
-            const result = await cartDao.deleteProduct(cartId,productId)
+            const result = await cartDao.deleteProduct(cartId, productId)
+            if (!result) {
+                throw new Error(ERROR.PRODUCT_DELETE_ERROR);
+            }
+
             return result
         } catch (error) {
             throw new Error(error.message)
@@ -85,6 +94,11 @@ class cartService {
                     { $push: { products: newCart } },
                     { new: true } // Return the modified document
                 ).populate('products.producto');
+
+                if (!result) {
+                    throw new Error(ERROR.PRODUCT_ADD_ERROR);
+                }
+
                 return result
             } else {
                 return cart
@@ -98,25 +112,23 @@ class cartService {
         try {
 
             if (!Array.isArray(products)) {
-                return res.status(400).json({
-                    status: 'error',
-                    message: 'La propiedad "products" debe ser un arreglo.',
-                });
+                throw new Error(ERROR.PRODUCT_UPDATE_ERROR);
             }
 
             // 2. Buscar el carrito por ID
             const existingCart = await Cart.findById(cartId);
 
             if (!existingCart) {
-                return res.status(404).json({
-                    status: 'error',
-                    message: 'Carrito no encontrado.',
-                });
+                throw new Error(ERROR.CART_NOT_FOUND);
             }
 
             // 3. Actualizar el carrito
             existingCart.products = products;
             const result = await existingCart.save();
+            if (!result) {
+                throw new Error(ERROR.PRODUCT_UPDATE_ERROR);
+            }
+
             return result
         } catch (error) {
             throw new Error(error.message)

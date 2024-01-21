@@ -6,6 +6,7 @@ import { generateToken } from '../utils/helpers.js';
 import passport from 'passport';
 import passportControl from '../middlewares/passportControl.js';
 import { registerUser, loginUser, logoutUser, restorePassword } from "../controller/sessionController.js";
+import { ERROR } from '../commons/errorMessages.js';
 
 const router = express.Router()
 router.use(express.json())
@@ -30,11 +31,12 @@ router.post('/register', passport.authenticate('register', {
 })
 
 router.get('/failregister', async (req, res) => {
-    res.send({ error: 'failed' })
+    res.send({ error: ERROR.USER_NOT_REGISTERED })
 })
 
 router.post('/login', passportControl('current',
-        {failureRedirect: '/failLogin'
+    {
+        failureRedirect: '/failLogin'
     })
     , async (req, res) => {
 
@@ -52,7 +54,7 @@ router.post('/login', passportControl('current',
     })
 
 router.get('/failLogin', async (req, res) => {
-    res.send({ error: 'failed' })
+    res.send({ error: ERROR.USER_NOT_LOGGED_IN })
 })
 
 router.delete('/logout', logoutUser)
