@@ -1,7 +1,7 @@
 'use strict'
 
 import { Product } from '../models/Models/productModel.js'
-import { getDAOS } from "../models/daos/index.dao.js";
+import { getDAOS } from "../models/DAO/indexDAO.js";
 const { productsDao } = getDAOS();
 
 class productService {

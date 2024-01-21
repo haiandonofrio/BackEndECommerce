@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt'
-import { getDAOS } from "../models/daos/index.dao.js";
+import { getDAOS } from "../models/DAO/indexDAO.js";
 const { usersDao } = getDAOS();
 
 

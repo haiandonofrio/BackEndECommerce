@@ -18,7 +18,7 @@ try {
         .then(() => console.log('Connection has been successfully'))
 
 } catch (error) {
-    handleError(error);
+    console.log(error);
 }
 
 
