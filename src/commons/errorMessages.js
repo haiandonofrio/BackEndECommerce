@@ -16,6 +16,7 @@ export const ERROR = {
     PRODUCT_NOT_UPDATED: 'No se pudo actualizar el producto',
     NO_CARTS_FOUND: 'No se encontraron carritos',
     SERVER_ERROR: 'Error interno del servidor',
+    
     CART_NOT_FOUND: 'Carrito no encontrado',
     CART_NOT_CREATED: 'No se pudo crear el carrito',
     CART_NOT_DELETED: 'No se pudo eliminar el carrito',
