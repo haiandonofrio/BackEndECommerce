@@ -13,8 +13,12 @@ import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import cors from 'cors';
 import initializedPassport from './controller/passportController.js';
-import passport from 'passport'
+import passport from 'passport';
+import loggerDev from './commons/loggerDev.js';
+import loggerProd from './commons/loggerProd.js';
+import fs from 'fs';
 
+const errorLogStream = fs.createWriteStream('logs/error.log', { flags: 'a' });
 const server = express()
 const serverIo = createServer(server)
 const io = new Server(serverIo)
@@ -44,6 +48,26 @@ server.use(passport.session())
 server.use('/api-doc', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 server.use('/api', router)
 
+// Middleware to log errors to the 'error.log' file
+server.use((err, req, res, next) => {
+    loggerProd.error(err.stack); // Using the production logger for error logs
+    errorLogStream.write(`${new Date().toISOString()} - ${err.stack}\n`);
+    next(err);
+  });
+  
+  // Endpoint to test all logs
+  server.get('/loggerTest', (req, res) => {
+    try {
+      // Simulate an error for testing
+      throw new Error('This is a test error');
+    } catch (error) {
+      // Log the error using the appropriate logger based on environment
+      const logger = process.env.NODE_ENV === 'production' ? loggerProd : loggerDev;
+      logger.error('Error here'); // Replace this line with the desired error message
+      logger.error(error.message);
+      res.status(500).send('Internal Server Error');
+    }
+  });
 
 function shutdown(message, code) {
     console.log(`Server ${code ? `${message}: ${code}` : 'stopped'}`)
