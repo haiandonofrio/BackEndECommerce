@@ -118,7 +118,7 @@ export const getProductByID = async (req, res) => {
 
 export const deleteProduct = async (req, res) => {
     try {
-        const products = await productService.deleteProduct(req.params.pid)
+        const products = await productService.deleteProduct(req.params.pid,req.session.user.email)
 
         if (!products) {
             return res.status(404).send({
@@ -145,7 +145,8 @@ export const modifyProduct = async (req, res) => {
     try {
         const filter = { _id: req.params.pid }
 
-        const products = await productService.updateProduct(req.body)
+
+        const products = await productService.updateProduct(req.body,req.session.user.email)
         if (!products) {
             return res.status(404).send({
                 status: 404,

@@ -142,7 +142,7 @@ export const addProductToCart = async (req, res) => {
     try {
         const { quantity } = req.body;
 
-        const cart = await cartService.addProduct(req.params, quantity)
+        const cart = await cartService.addProduct(req.params, quantity,req.session.user.email)
 
         // res.json(cart);
         const productData = cart.products.map(product => ({

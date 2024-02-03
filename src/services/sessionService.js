@@ -37,5 +37,17 @@ class userService {
             throw new Error(error.message)
         }
     }
+
+    static async updateRole(id, role) {
+        try {
+
+            const result = await usersDao.updateRole(id,role)
+
+            return result
+
+        } catch (error) {
+            throw new Error(error.message)
+        }
+    }
 }
 export default userService;

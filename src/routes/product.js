@@ -24,13 +24,13 @@ router.get('/', getProducts);
 router.get('/:pid', getProductByID)
 
 // Create a new product
-router.post('/', roleAuth('current',true),saveProduct)
+router.post('/', roleAuth('current',true,'CREATE'),saveProduct)
 
 // Update a product by ID
-router.put('/:pid',roleAuth('current',true), modifyProduct)
+router.put('/:pid',roleAuth('current',true,'UPDATE'), modifyProduct)
 
 // Delete a product by ID
-router.delete('/:pid',roleAuth('current',true), deleteProduct)
+router.delete('/:pid',roleAuth('current',true,'DELETE'), deleteProduct)
 
 
 export { router };
