@@ -1,6 +1,7 @@
 'use strict'
 
 import { Router } from "express";
+import { verifyTokenMiddleware } from "../middlewares/restoreLinkAuth.js";
 
 const router = Router()
 
@@ -12,7 +13,12 @@ router.get('/login', (req, res) => {
     res.render('login')
 })
 
-router.get('/restore', (req, res) => {
+router.get('/sendrestore', (req, res) => {
+    res.render('sendrestore')
+})
+
+router.get('/restore', verifyTokenMiddleware, (req, res) => {
+
     res.render('restore')
 })
 

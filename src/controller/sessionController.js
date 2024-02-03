@@ -3,35 +3,68 @@
 import { Users } from "../models/Models/usersModel.js";
 import userService from '../services/sessionService.js';
 import { config } from '../config.js';
-import { createHash, isValidPassword } from '../utils/helpers.js';
+import { createHash, generateMailToken, isValidPassword } from '../utils/helpers.js';
 import { ERROR, SUCCESS } from "../commons/errorMessages.js";
+import MailingService from "../services/mailing.js";
+
 // Import SUCCESS object
 
-export const restorePassword = async (req, res) => {
-    const { email, password } = req.body
-    const existe = await Users.findOne({ email })
-    if (!existe) return res.status(404).send({ status: 'error', error: ERROR.USER_NOT_FOUND })
+export const sendRestorePassword = async (req,res) => {
 
-    const hashedPassword = createHash(password)
-    const user = await Users.findOneAndUpdate(
+    const token = generateMailToken(req.body.email)
+    const mailer = new MailingService()
+    const sendMailer = await mailer.sendMailUser({
+
+        from:'coderprofeandrea@gmail.com',
+        to: req.body.email,
+        subject: 'Restaurar Contraseña',
+        html: `<div>Click en el siguiente link para restaurar su contraseña: http://localhost:3000/api/views/restore/verify?token=${token}`
+
+    })
+
+    res.send({ status: 'success', message: "Usuario registrado en el curso"})
+
+
+}
+
+export const restorePassword = async (req, res) => {
+    const { email, password } = req.body;
+    const existingUser = await Users.findOne({ email });
+
+    if (!existingUser) {
+        return res.status(404).send({ status: 'error', error: ERROR.USER_NOT_FOUND });
+    }
+
+    // Check if the new password is the same as the existing hashed password
+    if (isValidPassword(existingUser, password)) {
+        return res.status(400).send({ status: 'error', error: ERROR.SAME_PASSWORD });
+    }
+
+    const hashedPassword = createHash(password);
+
+    const updatedUser = await Users.findOneAndUpdate(
         { email: email },
         { $set: { 'password': hashedPassword } },
         { new: true }
-    )
+    );
 
-    res.send({ status: "success", message: SUCCESS.PASSWORD_RESTORED });
-}
+    res.send({ status: 'success', message: SUCCESS.PASSWORD_RESTORED });
+};
 
 export const registerUser = async (req, res) => {
-    const { first_name, last_name, email, age, password } = req.body
+    const { first_name, last_name, email, age, password, role } = req.body
     const existe = userService.getUser(email)
 
-    let role;
+    if(!role) {
+    let defaultRole;
     if (email === config.ADMINEMAIL && password === config.ADMINPASS) {
-        role = 'ADMIN'
+        defaultRole = 'ADMIN'
     } else {
-        role = 'USER'
+        defaultRole = 'USER'
     }
+    role = defaultRole;
+    }
+
     const hashedPassword = createHash(password)
     if (existe) return res.status(400).send({ status: 'error', error: ERROR.USER_ALREADY_EXISTS })
 
@@ -60,7 +93,8 @@ export const loginUser = async (req, res) => {
         first_name: user.first_name,
         last_name: user.last_name,
         email: user.email,
-        age: user.age
+        age: user.age,
+        role: user.role
     }
     res.send({ status: 'success', payload: req.session.user, message: SUCCESS.FIRST_LOGIN })
 }

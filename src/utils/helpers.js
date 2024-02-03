@@ -14,6 +14,27 @@ export const generateToken = (user) => {
     return token;
 }
 
+export const verifyToken = (token) => {
+    const secretKey =  config.PRIVATE_KEY; // Replace with your secret key
+  
+    try {
+      const decoded = jwt.verify(token, secretKey);
+      return decoded.data;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  };
+
+export const generateMailToken = (email) => {
+    const secretKey = config.PRIVATE_KEY; // Replace with your secret key
+    const expiresIn = 3600; // 1 hour in seconds
+  
+    const token = jwt.sign({ data: email }, secretKey, { expiresIn });
+  
+    return token;
+  };
+
 export const cookieExtractor = (req) => {
     let token = null;
     if (req && req.cookies) { // si existe la cookie
