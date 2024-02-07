@@ -6,6 +6,7 @@ import { generateToken } from '../utils/helpers.js';
 import passport from 'passport';
 import passportControl from '../middlewares/passportControl.js';
 import { registerUser, loginUser, logoutUser, restorePassword } from "../controller/sessionController.js";
+import { ERROR } from '../commons/errorMessages.js';
 
 const router = express.Router()
 router.use(express.json())
@@ -63,6 +64,8 @@ router.post('/restore', restorePassword)
 router.get('/current', passportControl('current'), (req, res) => {
     res.json({ payload: req.user });
 });
+
+router.put('/premium/:uid', changeRole);
 
 
 export { router };

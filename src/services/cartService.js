@@ -1,6 +1,6 @@
 import { Cart } from '../models/Models/cartModel.js';
 import { getDAOS } from "../models/DAO/indexDAO.js";
-const { cartDao } = getDAOS();
+const { cartDao, productsDao } = getDAOS();
 
 class cartService {
     static async getCarts() {
@@ -68,6 +68,15 @@ class cartService {
         try {
 
             const { cid, pid } = product.params;
+
+            const productId = await productsDao.getProductsById(pid)
+
+            const purchaser = await Cart.findById(cid).select('purchaser');
+
+            if (productId.owner === purchaser) {
+                throw new Error(ERROR.PRODUCT_ADD_ERROR)
+            }
+
             const cart = await Cart.findOneAndUpdate(
                 { _id: cid, 'products.producto': pid },
                 { $inc: { 'products.$.quantity': quantity || 1 } },

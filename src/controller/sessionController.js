@@ -71,8 +71,8 @@ export const logoutUser = async (req, res) => {
 
     req.session.destroy(err => {
         if (err) {
-            console.error('Error destroying session:', err);
-            res.status(500).send('Error clearing session');
+            console.error(ERROR.SESSION_ERROR, err);
+            res.status(500).send({ status: 'error', error: ERROR.SESSION_ERROR });
         } else {
             // Session cleared successfully
             res.status(200).send({ status: 'success', message: 'Deslogeo exitoso' })
@@ -83,3 +83,33 @@ export const logoutUser = async (req, res) => {
     )
 }
 
+export const changeRole = async (req, res) => {
+
+    const uid = req.params.uid;
+
+    try {
+        let user;
+
+        user = await userService.getUser(uid);
+
+        if (!user) {
+            user = await userService.getId(uid);
+            if (!user) {
+                return res.status(404).json({ error: ERROR.USER_NOT_FOUND });
+            }
+        }
+
+        if (user.role === 'USER') {
+        user.role = 'PREMIUM';
+        }else{
+            user.role = 'USER';
+        }
+
+        await userService.updateUser(user.email, user);
+
+        return res.json({ message: SUCCESS.USER_UPDATED, user });
+    } catch (error) {
+        console.error(ERROR.USER_NOT_UPDATED, error);
+        return res.status(500).json({ error: ERROR.SERVER_ERROR });
+    }
+}

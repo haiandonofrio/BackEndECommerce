@@ -37,5 +37,17 @@ class userService {
             throw new Error(error.message)
         }
     }
+
+    static async updateUser(email, updatedUser) {
+        try {
+
+            const result = await usersDao.updateUser(email,updatedUser)
+
+            return result
+
+        } catch (error) {
+            throw new Error(error.message)
+        }
+    }
 }
 export default userService;
