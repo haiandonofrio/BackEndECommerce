@@ -27,12 +27,20 @@ const colors = {
 
 winston.addColors(colors);
 
-const logger = winston.createLogger({
+const loggerProD = winston.createLogger({
   levels,
   format: logFormat,
   transports: [
     new winston.transports.File({ filename: 'logs/app-prod.log' })
   ]
 });
+const logTestErrorsPro = () => {
+  loggerProD.fatal('This is a test fatal error');
+  loggerProD.error('This is a test error');
+  loggerProD.warning('This is a test warning');
+  loggerProD.info('This is a test info');
+  loggerProD.http('This is a test http');
+  loggerProD.debug('This is a test debug');
+};
 
-export default logger;
+export { loggerProD, logTestErrorsPro };

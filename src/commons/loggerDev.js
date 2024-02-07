@@ -31,7 +31,7 @@ const colors = {
 
 winston.addColors(colors);
 
-const logger = winston.createLogger({
+const loggerDev = winston.createLogger({
   levels,
   format: logFormat,
   transports: [
@@ -43,6 +43,16 @@ const logger = winston.createLogger({
     }),
     new winston.transports.File({ filename: 'logs/app-dev.log' })
   ]
-});
 
-export default logger;
+});
+loggerDev.level = 'debug'; // O 'http' según el nivel que quieras ver
+const logTestErrorsdev = () => {
+  loggerDev.fatal('This is a test fatal error');
+  loggerDev.error('This is a test error');
+  loggerDev.warning('This is a test warning');
+  loggerDev.info('This is a test info');
+  loggerDev.http('This is a test http');
+  loggerDev.debug('This is a test debug');
+};
+
+export { loggerDev, logTestErrorsdev };
