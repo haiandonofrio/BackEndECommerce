@@ -5,7 +5,7 @@ import express from 'express';
 import { generateToken } from '../utils/helpers.js';
 import passport from 'passport';
 import passportControl from '../middlewares/passportControl.js';
-import { registerUser, loginUser, logoutUser, restorePassword,sendRestorePassword } from "../controller/sessionController.js";
+import { registerUser, loginUser, logoutUser, restorePassword,sendRestorePassword,changeRole } from "../controller/sessionController.js";
 import { ERROR } from '../commons/errorMessages.js';
 
 const router = express.Router()
@@ -67,6 +67,8 @@ router.post('/sendrestore', sendRestorePassword)
 router.get('/current', passportControl('current'), (req, res) => {
     res.json({ payload: req.user });
 });
+
+router.put('/premium/:uid', changeRole);
 
 
 export { router };

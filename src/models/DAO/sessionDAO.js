@@ -16,8 +16,8 @@ export class UsersDAO {
     return newUser;
   }
 
-  async updateUsers(id, payload) {
-    const updatedUser = await Users.updateOne({ email: id }, {
+  async updateUsers(email, payload) {
+    const updatedUser = await Users.updateOne({ email: email }, {
       $set: payload
     });
     return updatedUser;

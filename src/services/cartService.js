@@ -1,7 +1,6 @@
 import { Cart } from '../models/Models/cartModel.js';
 import { SUCCESS, ERROR } from '../commons/errorMessages.js'
 import { getDAOS } from "../models/DAO/indexDAO.js";
-import { Product } from '../models/Models/productModel.js';
 const { cartDao } = getDAOS();
 
 class cartService {
@@ -78,15 +77,6 @@ class cartService {
         try {
 
             const { cid, pid } = product.params;
-
-
-            const productToAdd = await Product.findOne({ _id: pid, owner: email });
-
-            if (productToAdd) {
-                throw new Error(ERROR.ADMIN_ACTION_REQUIRED);
-              }
-
-
             const cart = await Cart.findOneAndUpdate(
                 { _id: cid, 'products.producto': pid },
                 { $inc: { 'products.$.quantity': quantity || 1 } },

@@ -38,10 +38,14 @@ class userService {
         }
     }
 
-    static async updateRole(id, role) {
+    // static async updateRole(id, role) {
+    //     try {
+
+    //         const result = await usersDao.updateRole(id,role)
+    static async updateUser(email, updatedUser) {
         try {
 
-            const result = await usersDao.updateRole(id,role)
+            const result = await usersDao.updateUser(email,updatedUser)
 
             return result
 

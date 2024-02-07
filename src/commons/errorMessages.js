@@ -16,7 +16,7 @@ export const ERROR = {
     PRODUCT_NOT_UPDATED: 'No se pudo actualizar el producto',
     NO_CARTS_FOUND: 'No se encontraron carritos',
     SERVER_ERROR: 'Error interno del servidor',
-    SAME_PASSWORD:'La nueva contraseña debe ser distinta a la contraseña anterior',
+    USER_NOT_UPDATED: 'Error al actualizar usuario',
     CART_NOT_FOUND: 'Carrito no encontrado',
     CART_NOT_CREATED: 'No se pudo crear el carrito',
     CART_NOT_DELETED: 'No se pudo eliminar el carrito',
@@ -30,16 +30,16 @@ export const ERROR = {
     CART_DELETE_ERROR: 'Error al eliminar el carrito',
     PRODUCT_DELETE_ERROR: 'Error al eliminar el producto del carrito',
     PRODUCT_ADD_ERROR: 'Error al añadir el producto al carrito',
-    PRODUCT_UPDATE_ERROR: 'Error al actualizar el producto del carrito',
-    NO_TOKEN_PROVIDED: 'No token provided',
-    INVALID_TOKEN: 'Invalid token'
+    PRODUCT_UPDATE_ERROR: 'Error al actualizar el producto del carrito'
+
 
 }
 
 export const SUCCESS = {
+    USER_UPDATED: 'Usuario actualizado correctamente',
     ADMIN_ACTION_ALLOWED: 'Acción de administrador permitida',
     USER_ACTION_ALLOWED: 'Acción de usuario permitida',
-    PASSWORD_RESTORED: 'Contraseña restaurada con éxito',
+    PASSWORD_RESTORED: 'Contraseña restaurada',
     PASSWORD_CORRECT: 'Contraseña correcta',
     TOKEN_GENERATED: 'Token generado exitosamente',
     USER_REGISTERED: 'Usuario registrado',
