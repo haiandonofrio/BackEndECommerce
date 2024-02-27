@@ -105,8 +105,10 @@ export const getProductByID = async (req, res) => {
                 message: ERROR.PRODUCT_NOT_FOUND,
             })
         }
-
-        res.render('productDetail', products)
+        res.status(200).send({
+            body: products
+        })
+        // res.render('productDetail', products)
     } catch (err) {
         console.log(err)
         res.status(500).send({

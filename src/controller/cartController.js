@@ -77,7 +77,9 @@ export const getCartbyId = async (req, res) => {
             price: product.producto.price * product.quantity,
 
         }));
-        res.render('cartDetail', { products: productData });
+
+        res.status(200).send({ body: carts })
+        // res.render('cartDetail', { products: productData });
 
     } catch (err) {
         console.log(err)
@@ -152,7 +154,12 @@ export const addProductToCart = async (req, res) => {
             price: product.producto.price * product.quantity,
 
         }));
-        res.render('cartDetail', { products: productData });
+
+        res.status(200).send({
+            body: cart,
+            message: SUCCESS.CART_UPDATED
+        })
+        // res.render('cartDetail', { products: productData });
 
 
         // At this point, 'cart' contains the cart with the updated quantity
