@@ -1,5 +1,6 @@
 export const ERROR = {
     USER_NOT_FOUND: 'El usuario no existe',
+    USER_NOT_DOCUMENT: 'El usuario no tiene documentos cargados',
     USER_NOT_REGISTERED: 'No se pudo registrar el usuario',
     USER_NOT_LOGGED_IN: 'Inicio de sesión fallido',
     USER_ALREADY_EXISTS: 'El usuario ya existe',

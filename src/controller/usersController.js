@@ -141,6 +141,10 @@ export const changeRole = async (req, res) => {
             }
         }
 
+        if (!user.documents) {
+            return res.status(404).json({ error: ERROR.USER_NOT_DCOUMENTS });
+        }
+
         if (user.role === 'USER') {
             user.role = 'PREMIUM';
         } else {
