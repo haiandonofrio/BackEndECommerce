@@ -14,6 +14,17 @@ class userService {
         }
     }
 
+    static async getUsers() {
+        try {
+            const result = await usersDao.getUsers()
+
+            return result
+
+        } catch (error) {
+            throw new Error(error.message)
+        }
+    }
+
     static async getUser(email) {
         try {
             console.log(email)
@@ -46,6 +57,18 @@ class userService {
         try {
 
             const result = await usersDao.updateUser(email,updatedUser)
+
+            return result
+
+        } catch (error) {
+            throw new Error(error.message)
+        }
+    }
+
+    static async deleteUsers(time) {
+        try {
+
+            const result = await usersDao.deleteUsers(time)
 
             return result
 

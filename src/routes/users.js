@@ -5,7 +5,7 @@ import express from 'express';
 import { generateToken } from '../utils/helpers.js';
 import passport from 'passport';
 import passportControl from '../middlewares/passportControl.js';
-import { registerUser, loginUser, uploadFiles, logoutUser, restorePassword,sendRestorePassword,changeRole } from "../controller/usersController.js";
+import { registerUser, deleteInactiveUsers, getAllUsers, loginUser, uploadFiles, logoutUser, restorePassword,sendRestorePassword,changeRole } from "../controller/usersController.js";
 import { ERROR } from '../commons/errorMessages.js';
 import MulterConfig from '../middlewares/multer.js';
 
@@ -62,6 +62,7 @@ router.get('/failLogin', async (req, res) => {
 
 router.delete('/logout', logoutUser)
 
+router.delete('/', deleteInactiveUsers)
 router.post('/restore', restorePassword)
 
 router.post('/sendrestore', sendRestorePassword)
@@ -70,6 +71,8 @@ router.post('/sendrestore', sendRestorePassword)
 router.get('/current', passportControl('current'), (req, res) => {
     res.json({ payload: req.user });
 });
+
+router.get('/', getAllUsers)
 
 router.put('/premium/:uid', changeRole);
 

@@ -9,6 +9,21 @@ import MailingService from "../services/mailing.js";
 
 // Import SUCCESS object
 
+export const getAllUsers = async (req, res) => {
+    const users = await userService.getUsers();
+    res.json(users);
+
+}
+
+export const deleteInactiveUsers = async (req, res) => {
+    const time = 30 * 60 * 1000; // 30 minutes in milliseconds
+
+    const users = await userService.deleteUsers(time);
+
+    res.json(users);
+
+}
+
 export const sendRestorePassword = async (req, res) => {
 
     const token = generateMailToken(req.body.email)
