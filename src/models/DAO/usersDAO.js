@@ -46,12 +46,22 @@ export class UsersDAO {
     }
   }
 
+  async deleteUser(email) {
+    try {
+      await Users.deleteOne({ email });
+      return result;
+    } catch (error) {
+      console.error('Error occurred while deleting inactive users:', error);
+      throw error;
+    }
+  }
+
   async updateRole(id, role) {
 
-    const actualRole = await Users.findOne({ email : id, role : 'USER' }).lean();
-    if (actualRole) {
-      throw new Error(ERROR.ADMIN_ACTION_REQUIRED);
-    }
+    // const actualRole = await Users.findOne({ email : id, role : 'USER' }).lean();
+    // if (actualRole) {
+    //   throw new Error(ERROR.ADMIN_ACTION_REQUIRED);
+    // }
     const updatedUser = await Users.updateOne({ email: id }, {
       $set: { role: role }
     });

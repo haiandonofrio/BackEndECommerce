@@ -56,7 +56,31 @@ class userService {
     static async updateUser(email, updatedUser) {
         try {
 
-            const result = await usersDao.updateUser(email,updatedUser)
+            const result = await usersDao.updateUsers(email,updatedUser)
+
+            return result
+
+        } catch (error) {
+            throw new Error(error.message)
+        }
+    }
+
+    static async updateRole(email, newRole) {
+        try {
+
+            const result = await usersDao.updateRole(email, newRole)
+
+            return result
+
+        } catch (error) {
+            throw new Error(error.message)
+        }
+    }
+    
+    static async deleteUser(email) {
+        try {
+
+            const result = await usersDao.deleteUser(email)
 
             return result
 
