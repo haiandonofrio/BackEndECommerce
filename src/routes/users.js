@@ -5,10 +5,13 @@ import express from 'express';
 import { generateToken } from '../utils/helpers.js';
 import passport from 'passport';
 import passportControl from '../middlewares/passportControl.js';
-import { registerUser, loginUser, logoutUser, restorePassword,sendRestorePassword,changeRole } from "../controller/sessionController.js";
+import { registerUser, loginUser, uploadFiles, logoutUser, restorePassword,sendRestorePassword,changeRole } from "../controller/usersController.js";
 import { ERROR } from '../commons/errorMessages.js';
+import MulterConfig from '../middlewares/multer.js';
 
-const router = express.Router()
+const router = express.Router();
+const multerConfig = new MulterConfig();
+
 router.use(express.json())
 router.use(express.urlencoded({ extended: true }))
 
@@ -69,6 +72,8 @@ router.get('/current', passportControl('current'), (req, res) => {
 });
 
 router.put('/premium/:uid', changeRole);
+
+router.post('/:uid/documents', multerConfig.uploadFiles(), uploadFiles);
 
 
 export { router };

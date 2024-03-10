@@ -3,7 +3,7 @@
 import { Product } from '../models/Models/productModel.js';
 import { Users } from "../models/Models/usersModel.js";
 import productService from "../services/productService.js";
-import userService from "../services/sessionService.js"
+import userService from "../services/usersService.js"
 import { ERROR, SUCCESS } from "../commons/errorMessages.js"; // Import ERROR object
 
 export const getProducts = async (req, res) => {
@@ -120,7 +120,7 @@ export const getProductByID = async (req, res) => {
 
 export const deleteProduct = async (req, res) => {
     try {
-        const products = await productService.deleteProduct(req.params.pid,req.session.user.email)
+        const products = await productService.deleteProduct(req.params.pid, req.session.user.email)
 
         if (!products) {
             return res.status(404).send({
@@ -148,7 +148,7 @@ export const modifyProduct = async (req, res) => {
         const filter = { _id: req.params.pid }
 
 
-        const products = await productService.updateProduct(req.body,req.session.user.email)
+        const products = await productService.updateProduct(req.body, req.session.user.email)
         if (!products) {
             return res.status(404).send({
                 status: 404,

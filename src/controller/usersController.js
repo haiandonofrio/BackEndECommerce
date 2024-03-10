@@ -1,7 +1,7 @@
 'use strict'
 
 import { Users } from "../models/Models/usersModel.js";
-import userService from '../services/sessionService.js';
+import userService from '../services/usersService.js';
 import { config } from '../config.js';
 import { createHash, generateMailToken, isValidPassword } from '../utils/helpers.js';
 import { ERROR, SUCCESS } from "../commons/errorMessages.js";
@@ -9,13 +9,13 @@ import MailingService from "../services/mailing.js";
 
 // Import SUCCESS object
 
-export const sendRestorePassword = async (req,res) => {
+export const sendRestorePassword = async (req, res) => {
 
     const token = generateMailToken(req.body.email)
     const mailer = new MailingService()
     const sendMailer = await mailer.sendMailUser({
 
-        from:'haian.donofrio@gmail.com',
+        from: 'haian.donofrio@gmail.com',
         to: req.body.email,
         subject: 'Restaurar Contraseña',
         html: `<div>Click en el siguiente link para restaurar su contraseña: http://localhost:3000/api/views/restore/verify?token=${token}`
@@ -55,14 +55,14 @@ export const registerUser = async (req, res) => {
     const { first_name, last_name, email, age, password, role } = req.body
     const existe = userService.getUser(email)
 
-    if(!role) {
-    let defaultRole;
-    if (email === config.ADMINEMAIL && password === config.ADMINPASS) {
-        defaultRole = 'ADMIN'
-    } else {
-        defaultRole = 'USER'
-    }
-    role = defaultRole;
+    if (!role) {
+        let defaultRole;
+        if (email === config.ADMINEMAIL && password === config.ADMINPASS) {
+            defaultRole = 'ADMIN'
+        } else {
+            defaultRole = 'USER'
+        }
+        role = defaultRole;
     }
 
     const hashedPassword = createHash(password)
@@ -127,8 +127,8 @@ export const changeRole = async (req, res) => {
         }
 
         if (user.role === 'USER') {
-        user.role = 'PREMIUM';
-        }else{
+            user.role = 'PREMIUM';
+        } else {
             user.role = 'USER';
         }
 
@@ -138,5 +138,45 @@ export const changeRole = async (req, res) => {
     } catch (error) {
         console.error(ERROR.USER_NOT_UPDATED, error);
         return res.status(500).json({ error: ERROR.SERVER_ERROR });
+    }
+}
+
+export const uploadFiles = async (req, res) => {
+    try {
+        // Extract user ID from request parameters
+        const userId = req.params.uid;
+
+        // Extract uploaded files from req.files
+        const { ID, Address, Account_state } = req.files;
+
+        // Update user's documents array based on uploaded files
+        const user = await userService.getUser(userId);
+
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+
+        // Update user's documents array
+        if (ID) {
+            user.documents.push({ name: 'ID', reference: ID[0].filename });
+        }
+        if (Address) {
+            user.documents.push({ name: 'Address', reference: Address[0].filename });
+        }
+        if (Account_state) {
+            user.documents.push({ name: 'Account_state', reference: Account_state[0].filename });
+        }
+
+        // Save updated user document to the database
+        const result = await userService.updateUser(userId, user);
+
+        // Send a success response
+        if (result) {
+            res.send('Files uploaded successfully and user documents updated!');
+        }
+        
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('Internal Server Error');
     }
 }

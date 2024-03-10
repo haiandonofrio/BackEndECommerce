@@ -8,8 +8,8 @@ import { Users } from '../models/Models/usersModel.js';
 import { cookieExtractor } from '../utils/helpers.js';
 import { config } from '../config.js';
 import { createHash, isValidPassword } from '../utils/helpers.js';
-import userService from '../services/sessionService.js'
-import { ERROR, SUCCESS } from "../commons/errorMessages.js"; 
+import userService from '../services/usersService.js'
+import { ERROR, SUCCESS } from "../commons/errorMessages.js";
 
 const LocalStrategy = local.Strategy;
 const GitHubStrategy = github.Strategy;
