@@ -8,8 +8,8 @@ export default class MailingService {
             service: config.mailing.USER,
             port: 587,
             auth: {
-                user: config.mailing.USER,
-                pass: config.mailing.PASSWORD
+                user: config.MAIL_USER,
+                pass: config.MAIL_PASS
             }
         })
     }

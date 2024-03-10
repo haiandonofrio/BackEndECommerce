@@ -14,6 +14,8 @@ const config = {
     PRIVATE_KEY: process.env.PRIVATE_KEY,
     GITHUB_AUTH_ID: process.env.GITHUB_AUTH_ID,
     GITHUB_SECRET: process.env.GITHUB_SECRET,
+    MAIL_USER: process.env.MAIL_USER,
+    MAIL_PASS: process.env.MAIL_PASS
 }
 
 export { config }
