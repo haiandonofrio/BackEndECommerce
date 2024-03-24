@@ -1,5 +1,6 @@
 <div class=" d-flex flex-column mb-3">
     <h1>Carrito</h1>
+    <p id="cid" style="display: none;">{{cart}}</p>
     <table class='container m-5'>
         <thead>
             <tr>
@@ -27,4 +28,10 @@
             {{/each}}
         </tbody>
     </table>
+
+    <form class="purchaseCartform">
+    <button type="button" class="purchaseCart btn btn-primary">Comprar carrito</button>
+</form>
 </div>
+
+<script src="/js/purchaseCart.js"></script>

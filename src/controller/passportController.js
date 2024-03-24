@@ -7,9 +7,10 @@ import local from 'passport-local';
 import { Users } from '../models/Models/usersModel.js';
 import { cookieExtractor } from '../utils/helpers.js';
 import { config } from '../config.js';
-import { createHash, isValidPassword } from '../utils/helpers.js';
+import { createHash, generateMailToken, isValidPassword } from '../utils/helpers.js';
 import userService from '../services/usersService.js'
 import { ERROR, SUCCESS } from "../commons/errorMessages.js";
+import cartService from '../services/cartService.js';
 
 const LocalStrategy = local.Strategy;
 const GitHubStrategy = github.Strategy;
@@ -24,7 +25,7 @@ const initializedPassport = () => {
         },
         async (jwt_payload, done) => {
             try {
-                const user = userService.getUser(jwt_payload.user)
+                const user = await userService.getUser(jwt_payload.user)
 
                 if (!user) {
                     return done(null, false, { messages: ERROR.USER_NOT_FOUND });
@@ -46,17 +47,17 @@ const initializedPassport = () => {
         async (accessToken, refreshToken, profile, done) => {
             try {
                 const user = await userService.getUser(profile._json.email)
-                console.log('github strategy')
                 if (user) {
                     return done(null, user)
                 }
+                const cartSave = await cartService.createCart(profile._json.email)
                 const newUser = {
                     first_name: profile._json.name,
                     last_name: '',
                     email: profile._json.email,
                     age: '',
                     password: '',
-                    cart: []
+                    cart: cartSave._doc._id,
                 }
                 let result = await Users.create(newUser);
                 return done(null, result)
@@ -68,21 +69,27 @@ const initializedPassport = () => {
 
     passport.use('register', new LocalStrategy({ passReqToCallback: true, usernameField: 'email' },
         async (req, username, password, done) => {
-            const { first_name, last_name, email, age } = req.body;
+            const { first_name, last_name, email, age, role } = req.body;
             try {
                 const user = await userService.getUser(username)
                 if (user) {
                     return done(null, false, { messages: ERROR.USER_NOT_REGISTERED });
                 }
+                const cartSave = await cartService.createCart(email)
+                const cartCreated = await cartService.getCartByEmail(email)
+
                 const newUser = {
                     first_name,
                     last_name,
                     email,
                     age,
-                    password: createHash(password),
-                    cart: []
+                    password,
+                    cart: cartCreated._id,
+                    role
                 }
                 let result = await userService.createUser(newUser)
+
+
                 return done(null, result)
             } catch (error) {
                 done(ERROR.USER_NOT_REGISTERED + error)
@@ -95,7 +102,6 @@ const initializedPassport = () => {
 
             try {
                 const user = await userService.getUser(email)
-                console.log(' User login ' + user)
                 if (!user) {
                     return done(null, false, { messages: ERROR.USER_NOT_LOGGED_IN });
                 }

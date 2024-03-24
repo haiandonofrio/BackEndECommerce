@@ -51,17 +51,21 @@ export const getProducts = async (req, res) => {
         const userData = await userService.getUser(email);
 
         let admin;
-        if (userData._doc.role === 'ADMIN') {
+        if (userData.role === 'ADMIN') {
             admin = true
         } else {
             admin = false
         }
 
+`${nextLink}`
+        const cart = userData.cart._id;
+
         res.render('allProducts', {
             response,
             products: results.docs,
             user: userData,
-            admin
+            admin,
+            cart
         });
     } catch (err) {
         console.log(err)

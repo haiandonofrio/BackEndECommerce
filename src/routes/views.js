@@ -1,9 +1,13 @@
 'use strict'
 
-import { Router } from "express";
+import express from 'express';
 import { verifyTokenMiddleware } from "../middlewares/restoreLinkAuth.js";
+import { getUser, displayCart, updateUserRole, deleteUser } from "../controller/userAdminController.js";
 
-const router = Router()
+const router = express.Router();
+
+router.use(express.json())
+router.use(express.urlencoded({ extended: true }))
 
 router.get('/register', (req, res) => {
     res.render('register')
@@ -17,7 +21,11 @@ router.get('/sendrestore', (req, res) => {
     res.render('sendrestore')
 })
 
-router.get('/restore', verifyTokenMiddleware, (req, res) => {
+router.get('/cart', displayCart)
+
+router.get('/restore/verify', verifyTokenMiddleware, (req, res) => {
+
+    const token = req.query.token;
 
     res.render('restore')
 })
@@ -34,7 +42,7 @@ router.get('/', (req, res) => {
     })
 })
 
-app.get('/userAdmin', (req, res) => {
+router.get('/userAdmin', (req, res) => {
     if (req.session.user.role === 'ADMIN') {
         res.render('userAdmin');
     } else {
@@ -43,37 +51,10 @@ app.get('/userAdmin', (req, res) => {
 
 });
 
-app.post('/user', async (req, res) => {
-    const { email } = req.body;
-    try {
-        const user = await Users.findOne({ email });
-        res.render('user', { user });
-    } catch (error) {
-        console.error('Error occurred while fetching user:', error);
-        res.status(500).send('Internal Server Error');
-    }
-});
+router.post('/user', getUser);
 
-app.post('/user/update-role', async (req, res) => {
-    const { email, role } = req.body;
-    try {
-        await Users.updateOne({ email }, { $set: { role } });
-        res.redirect('/api/views/user');
-    } catch (error) {
-        console.error('Error occurred while updating user role:', error);
-        res.status(500).send('Internal Server Error');
-    }
-});
+router.post('/user/update-role', updateUserRole);
 
-app.post('/delete-user', async (req, res) => {
-    const { email } = req.body;
-    try {
-        await Users.deleteOne({ email });
-        res.redirect('/api/views/user');
-    } catch (error) {
-        console.error('Error occurred while deleting user:', error);
-        res.status(500).send('Internal Server Error');
-    }
-});
+router.post('/delete-user', deleteUser);
 
 export { router };

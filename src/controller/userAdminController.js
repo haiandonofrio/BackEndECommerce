@@ -1,51 +1,66 @@
 'use strict'
 
-import { Users } from "../models/Models/usersModel.js";
 import userService from '../services/usersService.js';
-import { config } from '../config.js';
-import { createHash, generateMailToken, isValidPassword } from '../utils/helpers.js';
-import { ERROR, SUCCESS } from "../commons/errorMessages.js";
-import MailingService from "../services/mailing.js";
+import cartService from '../services/cartService.js';
 
-
-class UserAdminController {
-    async getUser(req, res) {
-        const { email } = req.body;
-        try {
-            const user = await userService.getUser(email);
-            res.render('user', { user });
-        } catch (error) {
-            console.error('Error occurred while fetching user:', error);
-            res.status(500).send('Internal Server Error');
-        }
-    }
-
-    async updateUserRole(req, res) {
-        const { email, role } = req.body;
-        try {
-            const user = await userService.updateRole(email,role);
-            if (user) {
-                res.render('user', { user });
-            }
-        } catch (error) {
-            console.error('Error occurred while updating user role:', error);
-            res.status(500).send('Internal Server Error');
-        }
-    }
-
-    async deleteUser(req, res) {
-        const { email } = req.body;
-        try {
-            const user = await userService.delete(email);
-            if (user) {
-                res.redirect('/api/views/user');
-            }
-            
-        } catch (error) {
-            console.error('Error occurred while deleting user:', error);
-            res.status(500).send('Internal Server Error');
-        }
+export const getUser = async (req, res) => {
+    const { email } = req.body;
+    try {
+        const user = await userService.getUser(email);
+        res.render('userAdmin', { user });
+    } catch (error) {
+        console.error('Error occurred while fetching user:', error);
+        res.status(500).send('Internal Server Error');
     }
 }
 
-module.exports = UserAdminController;
+export const updateUserRole = async (req, res) => {
+    const { email, role } = req.body;
+    const roleUpperCase = role.toUpperCase();
+    try {
+        const result = await userService.updateRole(email, roleUpperCase);
+
+        if (result) {
+            const user = await userService.getUser(email);
+            res.render('userAdmin', { user });
+        }
+    } catch (error) {
+        console.error('Error occurred while updating user role:', error);
+        res.status(500).send('Internal Server Error');
+    }
+}
+
+export const deleteUser = async (req, res) => {
+    const { email } = req.body;
+    try {
+        const result = await userService.deleteUser(email);
+        if (result) {
+            res.redirect('/api/views/userAdmin');
+        }
+
+    } catch (error) {
+        console.error('Error occurred while deleting user:', error);
+        res.status(500).send('Internal Server Error');
+    }
+}
+
+export const displayCart = async (req, res) => {
+
+    const cartCreated = await cartService.getCartByEmail(req.session.user.email)
+    const cart = cartCreated._id
+    const productData = cartCreated.products.map(product => ({
+        title: product.producto.title,
+        description: product.producto.description,
+        quantity: product.quantity,
+        price: product.producto.price * product.quantity,
+
+    }));
+
+    res.render('cartDetail', {
+        products: productData,
+        cart
+    })
+}
+
+
+

@@ -12,7 +12,6 @@ const passportControl = (strategy, operation) => {
 
                 async function checking(email, password) {
                     const checkUsers = await checkUser(email, password);
-                    console.log(checkUsers);
                     return checkUsers;
                 }
 
@@ -44,7 +43,7 @@ const passportControl = (strategy, operation) => {
                         res.status(403).send({ status: "error", error: error.message });
                     });
             } else {
-                if (!isValidPassword(user._doc, req.body.password)) {
+                if (!isValidPassword(user, req.body.password)) {
                     return res.status(403).send({ status: "error", error: ERROR.INCORRECT_PASSWORD });
                 }
                 req.user = user;

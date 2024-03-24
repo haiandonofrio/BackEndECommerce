@@ -5,7 +5,7 @@ export default class MailingService {
 
     constructor() {
         this.client = mailer.createTransport({
-            service: config.mailing.USER,
+            service: config.MAIL_SERVICE,
             port: 587,
             auth: {
                 user: config.MAIL_USER,
@@ -15,8 +15,22 @@ export default class MailingService {
     }
 
     async sendMailUser({ from, to, subject, html, attachments = [] }) {
-        let result =  this.client.sendMail(from, to, subject, html, attachments);
-        return result;
+
+        const mailOptions = {
+            from,
+            to,
+            subject,
+            text: html
+        };
+
+        this.client.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.error('Error occurred:', error);
+            } else {
+                console.log('Email sent successfully:', info.response);
+                return info.response.toString();
+            }
+        });
     }
 
 }

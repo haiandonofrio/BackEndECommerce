@@ -7,7 +7,7 @@ class userService {
     static async createUser(data) {
         try {
             data.password = bcrypt.hashSync(data.password, bcrypt.genSaltSync(10))
-            const result = await usersDao.createUser(data)
+            const result = await usersDao.createUsers(data)
             return result
         } catch (error) {
             throw new Error(error.message)
@@ -27,7 +27,6 @@ class userService {
 
     static async getUser(email) {
         try {
-            console.log(email)
             const result = await usersDao.getUsersByEmail(email)
 
             return result

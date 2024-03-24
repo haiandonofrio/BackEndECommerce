@@ -1,6 +1,7 @@
 'use strict'
 
 import { ERROR, SUCCESS } from '../commons/errorMessages.js';
+import userService from '../services/usersService.js';
 import { Cart } from '../models/Models/cartModel.js';
 import cartService from '../services/cartService.js';
 import productService from '../services/productService.js';
@@ -144,16 +145,20 @@ export const addProductToCart = async (req, res) => {
     try {
         const { quantity } = req.body;
 
-        const cart = await cartService.addProduct(req.params, quantity,req.session.user.email)
+        const { pid } = req.params;
+
+        const user = await userService.getUser(req.session.user.email);
+        const cid = user.cart._id.toString();
+        const cart = await cartService.addProduct(pid, quantity, cid)
 
         // res.json(cart);
-        const productData = cart.products.map(product => ({
-            title: product.producto.title,
-            description: product.producto.description,
-            quantity: product.quantity,
-            price: product.producto.price * product.quantity,
+        // const productData = cart.products.map(product => ({
+        //     title: product.producto.title,
+        //     description: product.producto.description,
+        //     quantity: product.quantity,
+        //     price: product.producto.price * product.quantity,
 
-        }));
+        // }));
 
         res.status(200).send({
             body: cart,
@@ -227,8 +232,8 @@ export const purchaseCart = async (req, res) => {
                 if (product.stock === 0) {
                     product.status = false;
                 }
-                const product = await productService.getProductId(productId);
-                const productUpdated = await updateProduct.getProductId(product);// Llenar el array con la información del producto procesado
+                // const productid = await productService.getProductId(productId);
+                const productUpdated = await productService.updateProduct(product, req.session.user.email,req.session.user.role);// Llenar el array con la información del producto procesado
                 processedProducts.push({
                     //   productId: product._id,
                     product: product.title,

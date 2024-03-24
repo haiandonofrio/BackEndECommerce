@@ -42,6 +42,18 @@ class cartService {
         }
     }
 
+    static async getCartByEmail(email) {
+        try {
+
+            const result = await cartDao.getCartsByEmail(email);
+
+            return result
+
+        } catch (error) {
+            throw new Error(error.message)
+        }
+    }
+
     static async deleteCart(id) {
         try {
 
@@ -73,10 +85,9 @@ class cartService {
         }
     }
 
-    static async addProduct(product, quantity, email) {
+    static async addProduct(pid, quantity, cid) {
         try {
 
-            const { cid, pid } = product.params;
             const cart = await Cart.findOneAndUpdate(
                 { _id: cid, 'products.producto': pid },
                 { $inc: { 'products.$.quantity': quantity || 1 } },

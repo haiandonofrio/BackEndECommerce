@@ -1,6 +1,6 @@
-import { AdminManager } from "./userPermission/adminUser";
-import { UserManager } from "./userPermission/normalUser";
-import { PremiumManager } from "./userPermission/premuimUser";
+import { AdminManager } from "./userPermission/adminUser.js";
+import { UserManager } from "./userPermission/normalUser.js";
+import { PremiumManager } from "./userPermission/premuimUser.js";
 
 export class RoleManager {
 

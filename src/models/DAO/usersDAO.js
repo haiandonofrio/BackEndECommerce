@@ -8,12 +8,13 @@ export class UsersDAO {
   }
 
   async getUsersByEmail(id) {
-    const User = await Users.findOne({ email : id }).lean();
+    const User = await Users.findOne({ email: id }).populate('cart');
     return User;
   }
 
   async createUsers(payload) {
-    const newUser = await Users.create(payload);
+    const newUser = (await Users.create(payload));
+
     return newUser;
   }
 
@@ -49,7 +50,7 @@ export class UsersDAO {
   async deleteUser(email) {
     try {
       await Users.deleteOne({ email });
-      return result;
+      return 'Success';
     } catch (error) {
       console.error('Error occurred while deleting inactive users:', error);
       throw error;

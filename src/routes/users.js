@@ -50,7 +50,8 @@ router.post('/login', passportControl('current',
             first_name: req.user.first_name,
             last_name: req.user.last_name,
             email: req.user.email,
-            age: req.user.age
+            age: req.user.age,
+            role: req.user.role
         }
 
         res.send({ status: "success", payload: req.user });

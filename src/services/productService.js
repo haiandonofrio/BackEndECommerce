@@ -86,7 +86,7 @@ class productService {
         }
     }
 
-    static async updateProduct(product, email) {
+    static async updateProduct(product, email,role) {
         try {
             const update = {
                 title:  product.title,
@@ -101,7 +101,7 @@ class productService {
 
             // `doc` is the document _after_ `update` was applied because of
             // `returnOriginal: false`
-            const productUpdated = await productsDao.updateProducts(product._id,update,email)
+            const productUpdated = await productsDao.updateProducts(product._id,update,email,role)
             return productUpdated
         } catch (error) {
             throw new Error(error.message)
