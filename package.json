@@ -5,7 +5,6 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "postinstall": "husky install",
         "dev": "nodemon --config nodemon.json",
         "format": "prettier --write .",
         "start": "node src/index.js"
