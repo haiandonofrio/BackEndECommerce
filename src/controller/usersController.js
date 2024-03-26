@@ -30,10 +30,10 @@ export const sendRestorePassword = async (req, res) => {
     const mailer = new MailingService()
     const sendMailer = await mailer.sendMailUser({
 
-        from: 'haian.donofrio@gmail.com',
+        from: config.MAIL_USER,
         to: req.body.email,
         subject: 'Restaurar Contraseña',
-        html: `<div>Click en el siguiente link para restaurar su contraseña: http://localhost:3000/api/views/restore/verify?token=${token}`
+        html: `<div>Click en el siguiente link para restaurar su contraseña: http://localhost:3000/api/views/restore/verify?token=${token}</div>`
 
     })
 

@@ -16,7 +16,8 @@ const config = {
     GITHUB_SECRET: process.env.GITHUB_SECRET,
     MAIL_USER: process.env.MAIL_USER,
     MAIL_PASS: process.env.MAIL_PASS,
-    MAIL_SERVICE: process.env.MAIL_SERVICE
+    MAIL_SERVICE: process.env.MAIL_SERVICE,
+    MAIL_PORT: process.env.MAIL_PORT || 587
 }
 
 export { config }

@@ -2,10 +2,12 @@
 
 import { ERROR, SUCCESS } from '../commons/errorMessages.js';
 import userService from '../services/usersService.js';
-import { Cart } from '../models/Models/cartModel.js';
+import ticketService from '../services/ticketService.js';
 import cartService from '../services/cartService.js';
 import productService from '../services/productService.js';
-import { generateUniqueCode } from '../utils/helpers.js';
+import { generateUniqueCode, generateMailToken, generateBody } from '../utils/helpers.js';
+import MailingService from "../services/mailing.js";
+import { config } from 'dotenv';
 
 export const getCarts = async (req, res) => {
     try {
@@ -151,14 +153,6 @@ export const addProductToCart = async (req, res) => {
         const cid = user.cart._id.toString();
         const cart = await cartService.addProduct(pid, quantity, cid)
 
-        // res.json(cart);
-        // const productData = cart.products.map(product => ({
-        //     title: product.producto.title,
-        //     description: product.producto.description,
-        //     quantity: product.quantity,
-        //     price: product.producto.price * product.quantity,
-
-        // }));
 
         res.status(200).send({
             body: cart,
@@ -233,12 +227,12 @@ export const purchaseCart = async (req, res) => {
                     product.status = false;
                 }
                 // const productid = await productService.getProductId(productId);
-                const productUpdated = await productService.updateProduct(product, req.session.user.email,req.session.user.role);// Llenar el array con la información del producto procesado
+                const productUpdated = await productService.updateProduct(product, req.session.user.email, req.session.user.role);// Llenar el array con la información del producto procesado
                 processedProducts.push({
                     //   productId: product._id,
                     product: product.title,
                     quantity: requestedQuantity,
-                    //   unitPrice: product.price,
+                    unitPrice: product.price,
                 });
 
                 // Quitar el producto del array 'products' en el carrito
@@ -254,15 +248,30 @@ export const purchaseCart = async (req, res) => {
             // Si hay productos procesados, generar el ticket
             const ticket = {
                 code: generateUniqueCode(),
-                purchase_datetime: new Date(),
+                createdAt: new Date(),
                 amount: processedProducts.reduce((total, product) => total + product.quantity * product.unitPrice, 0),
                 purchaser: cart.purchaser,
-                processedProducts,
+                products: processedProducts,
             };
 
+            const ticketCreated = await ticketService.createTicket(ticket);
 
-            // Puedes hacer algo con el ticket, como guardarlo en la base de datos o devolverlo como respuesta
-            // En este ejemplo, simplemente lo devolvemos como respuesta
+            if (ticketCreated) {
+
+                const htmlBody = generateBody(ticket)
+
+                const token = generateMailToken(req.body.email)
+                const mailer = new MailingService()
+                const sendMailer = await mailer.sendMailUser({
+
+                    from: config.MAIL_USER,
+                    to: req.session.user.email,
+                    subject: 'Resumen de compra',
+                    html: htmlBody
+
+                })
+
+            }
             if (unprocessedProductIds.length > 0) {
                 res.status(200).json({ message: SUCCESS.PURCHASE_SUCCESSFUL, ticket, unprocessedProductIds });
             } else {
@@ -270,10 +279,6 @@ export const purchaseCart = async (req, res) => {
             }
         }
 
-        // if (unprocessedProductIds.length > 0) {
-        //   // Si hay productos no procesados, devolver sus IDs
-        //   res.status(400).json({ error: 'Algunos productos no tienen suficiente stock', unprocessedProductIds });
-        // }
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: ERROR.SERVER_ERROR });

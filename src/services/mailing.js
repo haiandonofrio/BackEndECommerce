@@ -6,7 +6,7 @@ export default class MailingService {
     constructor() {
         this.client = mailer.createTransport({
             service: config.MAIL_SERVICE,
-            port: 587,
+            port: config.MAIL_PORT,
             auth: {
                 user: config.MAIL_USER,
                 pass: config.MAIL_PASS
