@@ -8,12 +8,12 @@ class productService {
     static async getProducts(query) {
         try {
             const sortField = query.sort || 'price';
-        const sortOrder = parseInt( query.order === 'desc' ? '-1' : '1');
+            const sortOrder = parseInt(query.order === 'desc' ? '-1' : '1');
 
-            const currPage = parseInt( query.page) || 1;
-            const qlimit = parseInt( query.limit, 10) || 3;;
+            const currPage = parseInt(query.page) || 1;
+            const qlimit = parseInt(query.limit, 10) || 3;;
 
-            const { category, minStock } =  query; // Assuming query parameters for category and minStock
+            const { category, minStock } = query; // Assuming query parameters for category and minStock
 
             const filter = {};
             if (category) {
@@ -40,17 +40,19 @@ class productService {
         }
     }
 
-    static async saveProduct(product) {
+    static async saveProduct(product, owner, ownerRole) {
         try {
             const newProduct = new Product({
                 title: product.title,
-                description:  product.description,
-                price: parseFloat( product.price),
-                thumbnails:  product.thumbnails,
-                code:  product.code,
-                stock:  product.stock,
-                status:  product.status,
-                category:  product.category,
+                description: product.description,
+                price: parseFloat(product.price),
+                thumbnails: product.thumbnails,
+                code: product.code,
+                stock: product.stock,
+                status: product.status,
+                owner,
+                ownerRole,
+                category: product.category,
             })
 
             const productSave = await productsDao.createProducts(newProduct)
@@ -74,10 +76,10 @@ class productService {
         }
     }
 
-    static async deleteProduct(id,email) {
+    static async deleteProduct(id, email) {
         try {
 
-            const result = await productsDao.deleteProduct(id,email)
+            const result = await productsDao.deleteProduct(id, email)
 
             return result
 
@@ -86,22 +88,22 @@ class productService {
         }
     }
 
-    static async updateProduct(product, email,role) {
+    static async updateProduct(product, email, role) {
         try {
             const update = {
-                title:  product.title,
-                description:  product.description,
-                price:  product.price,
-                thumbnails:  product.thumbnails,
-                code:  product.code,
-                stock:  product.stock,
-                status:  product.status,
-                category:  product.category,
+                title: product.title,
+                description: product.description,
+                price: product.price,
+                thumbnails: product.thumbnails,
+                code: product.code,
+                stock: product.stock,
+                status: product.status,
+                category: product.category,
             }
 
             // `doc` is the document _after_ `update` was applied because of
             // `returnOriginal: false`
-            const productUpdated = await productsDao.updateProducts(product._id,update,email,role)
+            const productUpdated = await productsDao.updateProducts(product._id, update, email, role)
             return productUpdated
         } catch (error) {
             throw new Error(error.message)

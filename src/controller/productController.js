@@ -3,7 +3,9 @@
 import { Product } from '../models/Models/productModel.js';
 import { Users } from "../models/Models/usersModel.js";
 import productService from "../services/productService.js";
-import userService from "../services/usersService.js"
+import userService from "../services/usersService.js";
+import MailingService from "../services/mailing.js";
+import { generateMailToken } from '../utils/helpers.js';
 import { ERROR, SUCCESS } from "../commons/errorMessages.js"; // Import ERROR object
 
 export const getProducts = async (req, res) => {
@@ -57,7 +59,7 @@ export const getProducts = async (req, res) => {
             admin = false
         }
 
-`${nextLink}`
+        `${nextLink}`
         const cart = userData.cart._id;
 
         res.render('allProducts', {
@@ -78,7 +80,7 @@ export const getProducts = async (req, res) => {
 
 export const saveProduct = async (req, res) => {
     try {
-        const productSave = await productService.saveProduct(req.body)
+        const productSave = await productService.saveProduct(req.body, req.session.user.email, req.session.user.role);
         if (!productSave) {
             return res.status(500).send({
                 status: 500,
@@ -124,7 +126,12 @@ export const getProductByID = async (req, res) => {
 
 export const deleteProduct = async (req, res) => {
     try {
+        const productToDelete = await productService.getProductId(req.params.pid);
+        if (!productToDelete) {
+            throw new Error("No se ha encontrado el producto")
+        }
         const products = await productService.deleteProduct(req.params.pid, req.session.user.email)
+
 
         if (!products) {
             return res.status(404).send({
@@ -133,6 +140,18 @@ export const deleteProduct = async (req, res) => {
             })
         }
 
+        if (productToDelete.ownerRole === 'PREMIUM' && productToDelete.owner) {
+            const token = generateMailToken(req.body.email)
+            const mailer = new MailingService()
+            const sendMailer = await mailer.sendMailUser({
+
+                from: config.MAIL_USER,
+                to: productToDelete.owner,
+                subject: 'Producto borrado',
+                html: `<div>Se ha borrado el producto ${productService.title} que usted había creado</div>`
+
+            })
+        }
         return res.status(200).send({
             status: 'success',
             message: SUCCESS.PRODUCT_DELETED,

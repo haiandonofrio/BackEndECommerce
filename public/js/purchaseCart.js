@@ -15,7 +15,7 @@ async function performFetch(url) {
             }
         })
         .then(json => {
-            console.log('Carrito comprado')
+            alert('Carrito comprado')
             window.location.href = '/api/product';
         })
         .catch(error => {

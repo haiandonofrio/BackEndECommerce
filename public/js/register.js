@@ -22,7 +22,7 @@ form.addEventListener('submit', e => {
             }
         })
         .then(json => {
-            // Redirect to '/api/product' upon successful registration
+            
             window.location.href = '/api/views/login';
         })
         .catch(error => {

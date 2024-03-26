@@ -15,7 +15,7 @@ async function performFetch(url) {
             }
         })
         .then(json => {
-            console.log('Producto Añadido al Carrito')
+            alert('Producto Añadido al Carrito')
         })
         .catch(error => {
             console.error('Error:', error);
